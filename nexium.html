@@ -268,6 +268,8 @@
   .src-list { margin: 0; padding-left: 22px; color: var(--muted); font-size: 14.5px; }
   .src-list li { margin-bottom: 10px; }
   .src-list a { color: var(--text-2); }
+  .src-notes { margin-top: 28px; font-size: 14px; color: var(--muted); }
+  .src-notes p { margin: 0 0 10px; }
   .galaxy-fig { margin: 0 0 28px; }
   .galaxy-fig img { width: 100%; display: block; border-radius: 8px; }
   .galaxy-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
@@ -510,12 +512,16 @@
   </div>
   <section class="sec wrap" id="sec-kaynakca" hidden>
     <ol class="src-list" id="sources-list"></ol>
+    <div class="src-notes">
+      <p data-i18n="foot_verify">Doğrulama. Tarih, konum, durum ve mesafe bilgileri yaklaşıktır.</p>
+      <p data-i18n="foot_story">"Hikaye" bölümleri kurgusal anlatımdır.</p>
+    </div>
   </section>
 
 </main>
 
 
-<footer class="wrap">
+<footer class="wrap" hidden>
   <p data-i18n="foot_verify">Doğrulama. Tarih, konum, durum ve mesafe bilgileri yaklaşıktır. Yayımlamadan önce ilgili NASA, JPL, ESA ve Roscosmos sayfalarından kontrol edilmelidir.</p>
   <p data-i18n="foot_story">"Hikaye" bölümleri kurgusal anlatımdır. Olaylar gerçeğe dayanır; birinci tekil şahıs sesi bir yorumdur.</p>
 </footer>
@@ -538,7 +544,7 @@ const MAP_SRC = {
   titan: "maps/titan.jpg"
 };
 /* Gerçek görüntü için tam disk fotoğrafı */
-const REAL_IMG = { ay: IMG.moon_a, mars: IMG.mars_a, venus: "maps/venus.jpg", titan: "maps/titan.jpg" };
+const REAL_IMG = { ay: IMG.moon_a, mars: IMG.mars_a };
 
 /* ================= ÇEVİRİ ================= */
 const T = {
@@ -619,7 +625,7 @@ const T = {
     src_title: "Kaynakça",
     nav_sources: "Kaynakça", src_h: "Kaynakça", nav_galaxy: "Samanyolu", gal_eyebrow: "Galaksi", gal_title: "Samanyolu",
     gal_lede: "Güneş Sistemimiz, Samanyolu adı verilen spiral galaksinin içinde yer alır.",
-    gal_text: "Samanyolu'nda yüz milyarlarca yıldız olduğu tahmin edilir. Güneş, galaksinin merkezinden yaklaşık 26.000 ışık yılı uzaklıktadır. Gökyüzündeki bulutsu şerit, galaksinin disk yapısına bakışımızın sonucudur. Ay, Mars, Venüs ve Titan'daki makineler bu yıldız sisteminin küçük bir köşesinde çalışıyor.",
+    gal_text: "Samanyolu'nda yüz milyarlarca yıldız olduğu tahmin edilir. Güneş, galaksinin merkezinden yaklaşık 26.000 ışık yılı uzaklıktadır. Gökyüzündeki bulutsu şerit, galaksinin disk yapısına bakışımızın sonucudur.",
     gal_credit: "Samanyolu'nun 360 derecelik panoraması. ESO / S. Brunier. CC BY 4.0.",
     src_lede: "Sitedeki bilgi, fotoğraf ve harita kaynakları. Metinlerde kaynak bağlantısı yoktur; hepsi bu sayfada toplanmıştır.",
     fact_label: "Bilgi:",
@@ -711,7 +717,7 @@ const T = {
     src_title: "Sources",
     nav_sources: "Sources", src_h: "Sources", nav_galaxy: "Milky Way", gal_eyebrow: "Galaxy", gal_title: "The Milky Way",
     gal_lede: "Our Solar System lies inside a barred spiral galaxy called the Milky Way.",
-    gal_text: "The Milky Way is estimated to hold hundreds of billions of stars. The Sun lies about 26,000 light-years from the galactic center. The band of light across the sky is our view into the galaxy's disk. The machines on the Moon, Mars, Venus and Titan work in one small corner of this star system.",
+    gal_text: "The Milky Way is estimated to hold hundreds of billions of stars. The Sun lies about 26,000 light-years from the galactic center. The band of light across the sky is our view into the galaxy's disk.",
     gal_credit: "360-degree panorama of the Milky Way. ESO / S. Brunier. CC BY 4.0.",
     src_lede: "Sources for the information, photos and maps on this site. Text does not link to sources; all of them are collected on this page.",
     fact_label: "Fact:",
@@ -1216,8 +1222,7 @@ const PHOTO_LOCAL = {
   lunokhod1: { src: "img/lunokhod1.png", title: "Lunokhod 1 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
   lunokhod2: { src: "img/lunokhod2.jpg", title: "Lunokhod 2 · NASA/LRO görüntüsü (kamu malı)" },
   yutu2: { src: "img/yutu2.jpg", title: "Yutu-2 · CNSA/CLEP (CC BY 4.0)" },
-  venera13: { src: "img/venera13.jpg", title: "Venera 13 yüzey panoraması · SSCB/NASA (kamu malı)" },
-  huygens: { src: "img/huygens.jpg", title: "Huygens'ın Titan yüzeyinden ilk renkli görüntüsü · ESA/NASA (kamu malı)" }
+  venera13: { src: "img/venera13.jpg", title: "Venera 13 yüzey panoraması · SSCB/NASA (kamu malı)" }
 };
 
 /* ================= YARDIMCILAR ================= */
@@ -1506,7 +1511,7 @@ function setBody(body) {
   state.body = body;
   document.querySelectorAll("[data-body]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.body === body)));
   const g = globes[body];
-  const useReal = state.view === "real" || !g.tex;
+  const useReal = (state.view === "real" && !!REAL_IMG[body]) || !g.tex;
   for (const b of ["ay", "mars", "venus", "titan"]) document.getElementById("canvas-" + b).hidden = body !== b || useReal;
   applyRealImage(useReal);
   g.dirty = true;
@@ -1523,7 +1528,7 @@ function applyRealImage(useReal) {
   img.alt = L("alt_" + ({ ay: "moon", mars: "mars", venus: "venus", titan: "titan" }[body]));
   img.hidden = !useReal;
   const btn = document.querySelector("[data-view]");
-  btn.disabled = !g.tex;
+  btn.disabled = !g.tex || !REAL_IMG[body];
   btn.setAttribute("aria-pressed", String(state.view === "real"));
   btn.textContent = state.view === "real" ? L("view_sim") : L("view_real");
   const capKey = g.mapState === "fail" ? "cap_fail"
