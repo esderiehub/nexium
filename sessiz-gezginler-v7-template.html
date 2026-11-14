@@ -314,6 +314,10 @@
   .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; margin: auto 6px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text-2); }
   .theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   html:not([data-theme="dark"]) .i-sun, html[data-theme="dark"] .i-moon { display: none; }
+  .match-row { margin: 14px 0; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .match-row select { margin-top: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; }
+  .ok-t { color: var(--ok); font-weight: 700; }
+  .bad-t { color: var(--bad); font-weight: 600; }
   .ord-list { margin: 16px 0; padding-left: 20px; color: var(--text-2); }
   html[data-mode="kids"] { --radius: 16px; --accent: #f59e0b; --btn-text: #1a1200; --btn-hover: #fbb13c; --card-hover: #f59e0b; }
   html[data-mode="kids"] body { background-image: radial-gradient(circle, var(--line) 1.4px, transparent 1.9px); background-size: 44px 44px; }
@@ -703,7 +707,7 @@ const T = {
     nav_sources: "Kaynakça", src_h: "Kaynakça",
     src_lede: "Sitedeki bilgi, fotoğraf ve harita kaynakları. Metinlerde kaynak bağlantısı yoktur; hepsi bu sayfada toplanmıştır.",
     fact_label: "Bilgi:",
-    game_quiz: "Quiz", game_wordle: "Kelime tahmini", game_fill: "Boşluk doldurma", game_order: "Sıralama",
+    game_quiz: "Quiz", game_wordle: "Kelime tahmini", game_fill: "Boşluk doldurma", game_order: "Sıralama", game_match: "Hikâye eşleştirme", match_q: "Her hikâyeyi anlatan makineyi seçin.", match_check: "Kontrol et", match_next: "Sonraki",
     ord_q: "Makineleri iniş yılına göre sıralayın: en eskiden en yeniye. Sırayla tıklayın.", ord_reset: "Sıfırla", ord_check: "Kontrol et", ord_next: "Sonraki", ord_ok: "Doğru sıra.", ord_bad: "Doğru sıra şöyle:", ord_result: "Sonuç",
     wd_lede: "Gizli kelimeyi 6 denemede bulun. Yeşil: harf doğru yerde. Sarı: harf kelimede var ama yeri farklı. Gri: harf yok.",
     wd_hint: "İpucu", wd_placeholder: "Tahmininizi yazın", wd_submit: "Tahmin et", wd_new: "Yeni kelime",
@@ -799,7 +803,7 @@ const T = {
     nav_sources: "Sources", src_h: "Sources",
     src_lede: "Sources for the information, photos and maps on this site. Text does not link to sources; all of them are collected on this page.",
     fact_label: "Fact:",
-    game_quiz: "Quiz", game_wordle: "Word guess", game_fill: "Fill in the blank", game_order: "Ordering",
+    game_quiz: "Quiz", game_wordle: "Word guess", game_fill: "Fill in the blank", game_order: "Ordering", game_match: "Match the story", match_q: "Which machine told each story? Choose one for each.", match_check: "Check", match_next: "Next",
     ord_q: "Put the machines in order of landing year: oldest first. Click them in sequence.", ord_reset: "Reset", ord_check: "Check", ord_next: "Next", ord_ok: "Correct order.", ord_bad: "The correct order is:", ord_result: "Result",
     wd_lede: "Find the hidden word in 6 tries. Green: right letter, right place. Yellow: letter is in the word but in another place. Gray: letter not in the word.",
     wd_hint: "Hint", wd_placeholder: "Type your guess", wd_submit: "Guess", wd_new: "New word",
@@ -2146,7 +2150,7 @@ function newWordle() {
   wdState = { t: pick.w, h: pick.h, rows: [], msg: "", over: false };
 }
 function renderGameModes() {
-  const modes = [["quiz", "game_quiz"], ["wordle", "game_wordle"], ["fill", "game_fill"], ["order", "game_order"]];
+  const modes = [["quiz", "game_quiz"], ["wordle", "game_wordle"], ["fill", "game_fill"], ["order", "game_order"], ["match", "game_match"]];
   document.getElementById("game-modes").innerHTML = modes.map(([k, l]) =>
     `<button class="btn" data-game="${k}" aria-pressed="${gameMode === k}">${L(l)}</button>`).join("");
 }
@@ -2154,6 +2158,7 @@ function renderGame() {
   if (gameMode === "wordle") renderWordle();
   else if (gameMode === "fill") renderFill();
   else if (gameMode === "order") renderOrder();
+  else if (gameMode === "match") renderMatch();
   else renderQuiz();
 }
 const ORDER_SETS = [
@@ -2187,6 +2192,53 @@ function renderOrder() {
     renderOrder();
   }
 }
+/* Hikâye eşleştirme: hikâyeyi anlatan makineyi seç */
+let matchState = null;
+function newMatch() {
+  const copy = machines.filter(m => m.story);
+  const pick = [];
+  while (pick.length < 4 && copy.length) pick.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+  matchState = { ids: pick.map(m => m.id), names: pick.map(m => m.id).sort(() => Math.random() - 0.5), picks: {}, done: false, score: 0 };
+}
+function renderMatch() {
+  if (!matchState) newMatch();
+  const root = document.getElementById("quiz-root");
+  const K = KG[state.lang === "en" ? "en" : "tr"];
+  const T2 = state.lang === "en" ? "Machine" : "Makine";
+  const first = m => ((mf(m, "story") || "").split(/(?<=[.!?])\s+/)[0] || "").replace(/"/g, "'");
+  const rows = matchState.ids.map(id => {
+    const picked = matchState.picks[id] || "";
+    let fb = "";
+    if (matchState.done) fb = picked === id ? ` <span class="ok-t">✓</span>` : ` <span class="bad-t">✗ ${mf(byId[id], "name")}</span>`;
+    return `<div class="match-row">
+      <p class="lead">“${first(byId[id])}”</p>
+      <select data-match-pick="${id}" aria-label="${T2}" ${matchState.done ? "disabled" : ""}>
+        <option value="">—</option>
+        ${matchState.names.map(n => `<option value="${n}" ${picked === n ? "selected" : ""}>${mf(byId[n], "name")}</option>`).join("")}
+      </select>${fb}</div>`;
+  }).join("");
+  const en = state.lang === "en";
+  root.innerHTML = `
+    <p class="eyebrow">${L("game_match")}</p>
+    <h3 class="qtext">${L("match_q")}</h3>
+    ${rows}
+    ${matchState.done
+      ? `<p class="feedback">${matchState.score} / 4</p><button class="btn btn-solid" data-match-next>${L("match_next")}</button>`
+      : `<button class="btn btn-solid" data-match-check>${L("match_check")}</button>`}`;
+}
+function checkMatch() {
+  let sc = 0;
+  for (const id of matchState.ids) if (matchState.picks[id] === id) sc++;
+  matchState.score = sc; matchState.done = true;
+  if (sc) addStars(sc);
+  renderMatch();
+}
+document.addEventListener("change", e => {
+  if (e.target && e.target.dataset && e.target.dataset.matchPick && matchState) {
+    matchState.picks[e.target.dataset.matchPick] = e.target.value;
+  }
+});
+
 function setGame(g) { gameMode = g; renderGameModes(); renderGame(); }
 function renderWordle() {
   if (!wdState) newWordle();
@@ -2486,6 +2538,8 @@ document.addEventListener("click", e => {
   if (t.closest("[data-fl-next]")) { flState.i++; flState.answered = null; return renderFill(); }
   if (t.closest("[data-fl-restart]")) { flState = { i: 0, score: 0, answered: null }; return renderFill(); }
   if ((el = t.closest("[data-ord]"))) { ordState.picked.push(el.dataset.ord); return renderOrder(); }
+  if (t.closest("[data-match-check]")) return checkMatch();
+  if (t.closest("[data-match-next]")) { newMatch(); return renderMatch(); }
   if (t.closest("[data-ord-reset]")) { ordState.picked = []; return renderOrder(); }
   if (t.closest("[data-ord-next]")) { ordState = { set: ordState.set + 1, picked: [], done: false, ok: null }; return renderOrder(); }
   if ((el = t.closest("[data-opt]"))) return answerQuiz(Number(el.dataset.opt));
