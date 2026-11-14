@@ -2527,7 +2527,7 @@ function toggleTheme() {
   applyTheme(next);
   try { localStorage.setItem("nexium-theme", next); } catch (e) {}
 }
-try { applyTheme(localStorage.getItem("nexium-theme") === "dark" ? "dark" : "light"); } catch (e) { applyTheme("light"); }
+try { applyTheme(localStorage.getItem("nexium-theme") === "light" ? "light" : "dark"); } catch (e) { applyTheme("dark"); }
 
 /* ================= MOD (İlkokul / Standart) ================= */
 function currentMode() { return document.documentElement.getAttribute("data-mode") === "kids" ? "kids" : "std"; }
