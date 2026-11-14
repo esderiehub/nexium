@@ -109,6 +109,14 @@
   .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; border-radius: 50%; }
   .stage canvas.grabbing { cursor: grabbing; }
   .stage .real { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+  .kid-talk { display: flex; flex-direction: column; gap: 10px; }
+  .kid-msg { max-width: 88%; padding: 11px 14px; border-radius: 16px; font-size: 17px; line-height: 1.6; }
+  .kid-msg b { display: block; font-size: 13px; margin-bottom: 3px; opacity: .8; }
+  .kid-u { align-self: flex-start; background: #bbf7d0; color: #052e16; border-bottom-left-radius: 4px; }
+  .kid-a { align-self: flex-end; background: var(--surface-2); color: var(--text); border-bottom-right-radius: 4px; }
+  .kid-action { margin-top: 16px; }
+  .kid-quiz .qtext { font-size: 20px; margin: 8px 0 14px; }
+  .kid-quiz .big { font-size: 40px; font-weight: 700; margin: 8px 0; }
   .radio-hdr { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; letter-spacing: .06em; color: var(--accent); margin: 0 0 12px; }
   .counter { margin: 0 0 6px; font-size: 14px; color: var(--muted); }
   .caption { margin: 14px 0 0; font-size: 13px; color: var(--muted); max-width: 62ch; }
@@ -1873,6 +1881,10 @@ function renderPanel() {
   } else {
     content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="radio-hdr">▮ SON İLETİM · ${m.year} · ${mf(m, "place")}</p><p>${mf(m, "story")}</p></div>`;
   }
+  if (document.documentElement.getAttribute("data-mode") === "kids") {
+    tabs.innerHTML = "";
+    content = kidsPanel(m);
+  }
   body.className = "panel-body";
   body.innerHTML = content;
   nav.innerHTML = `<button data-go="${prev.id}">← ${mf(prev, "name")}</button><button data-go="${next.id}">${mf(next, "name")} →</button>`;
@@ -2503,6 +2515,11 @@ document.addEventListener("click", e => {
   if (t.closest("[data-chat-close]")) { document.getElementById("chat").hidden = true; return; }
   if ((el = t.closest("[data-chip]"))) return sendChat(el.dataset.chip);
   if ((el = t.closest("[data-spage]"))) { storyPage += Number(el.dataset.spage); return renderPanel(); }
+  if (t.closest("[data-kid-next]")) { kidState.step++; return renderPanel(); }
+  if (t.closest("[data-kid-quizstart]")) { kidState.quiz = genKidQuiz(byId[kidState.id]); kidState.qi = 0; kidState.score = 0; kidState.sel = null; return renderPanel(); }
+  if ((el = t.closest("[data-kid-opt]"))) { answerKidQ(Number(el.dataset.kidOpt)); return; }
+  if (t.closest("[data-kid-qnext]")) { kidState.qi++; kidState.sel = null; return renderPanel(); }
+  if (t.closest("[data-kid-restart]")) { kidState = { id: kidState.id, step: 1, quiz: null, qi: 0, score: 0, sel: null }; return renderPanel(); }
   if (t.closest("[data-mode-toggle]")) return chooseMode(currentMode() === "kids" ? "std" : "kids");
   if ((el = t.closest("[data-go]"))) return selectMachine(el.dataset.go, true);
   if ((el = t.closest("[data-ptab]"))) { state.panel = el.dataset.ptab; return renderPanel(); }
@@ -2891,6 +2908,127 @@ function finishGate() {
     document.getElementById("nex-close-btn").textContent = G.nex_close;
     document.getElementById("nex-bubble").hidden = false;
   }
+}
+
+/* ================= BASİT MOD: UZAYLI–ASTRONOT KONUŞMASI VE QUİZ ================= */
+const DLG = {
+  tr: {
+    apollo11: ["u|Bu koca iniş kademesi ne?", "a|Bu Apollo 11'in iniş kademesi! 1969'da astronotlarımızı Ay'a indirdi.", "u|Sonra ne oldu?", "a|Üst kısım Ay'dan kalktı. Bu parça Sessizlik Denizi'nde yerinde kaldı."],
+    surveyor3: ["u|Bu beyaz araç kim?", "a|Bu Surveyor 3! 1967'de Ay'a yumuşak iniş yapan bir robot.", "u|Peki ona ne oldu?", "a|Yıllar sonra astronotlar geldi ve kamerasını Dünya'ya getirdi."],
+    lunokhod1: ["u|Bu sekiz tekerlekli araç ne?", "a|Bu Lunokhod 1! Dünya'dan kumandayla yönetilen ilk Ay gezgini.", "u|Ne kadar yol gitti?", "a|Yaklaşık 10,5 kilometre! Ay'da yaklaşık on bir ay çalıştı."],
+    lunokhod2: ["u|Bu gezgin de Ay'da mı?", "a|Evet, bu Lunokhod 2! Serenite Denizi'nde çalıştı.", "u|Peki en çok yolu kim gitti?", "a|Lunokhod 2, Ay gezginleri arasında en uzun mesafeyi kat etti: yaklaşık 37 kilometre!"],
+    apollo15: ["u|Bu gezgin neden bu kadar büyük?", "a|Bu Apollo 15 Ay Gezgini! İnsanların sürdüğü ilk gezgin.", "u|Nerede sürdüler?", "a|Hadley Vadisi'nde! Astronotlar gezginle çok uzaklara gitti."],
+    apollo16: ["u|Bu da bir Ay gezgini mi?", "a|Evet, Apollo 16'nın gezgini. Descartes Yükseltisi'nde çalıştı.", "u|Burada ne buldular?", "a|Ay'ın yüksek bölgelerinden kayaç örnekleri topladılar."],
+    apollo17: ["u|Bu gezgini iki astronot mu sürdü?", "a|Evet! Apollo 17'de Ay'da insanların sürdüğü son gezgin bu.", "u|Nereye gittiler?", "a|Taurus-Littrow Vadisi'ne! Yaklaşık 35 kilometre yol kat ettiler."],
+    yutu2: ["u|Bu küçük gezgin nereden geldi?", "a|Bu Yutu-2! Çin'in Chang'e-4 görevinin gezgini.", "u|Ay'ın hangi yüzünde çalıştı?", "a|Dünya'ya hiç bakmayan uzak yüzünde! Yer altını radarla taradı."],
+    viking1: ["u|Bu iniş aracı Mars'ta mı?", "a|Evet, Viking 1! Mars'a başarıyla inen ilk ABD aracı.", "u|Ne yaptı?", "a|Yüzeyden fotoğraflar gönderdi ve toprakta deneyler yaptı."],
+    viking2: ["u|Viking 2 nerede?", "a|Viking 1'in kardeşi! Mars'ın kuzeyindeki Utopia Ovası'na indi.", "u|Ne kadar çalıştı?", "a|Yaklaşık üç yıl yedi ay boyunca veri gönderdi."],
+    sojourner: ["u|Bu küçük kutu ne?", "a|Bu Sojourner! Mars'ta çalışan ilk gezgin.", "u|Ne kadar yol gitti?", "a|Yaklaşık 100 metre! Pathfinder'ın içinden çıkıp kayaları inceledi."],
+    spirit: ["u|Bu gezgin neden hâlâ orada?", "a|Bu Spirit! Planlanan üç aylık görevinden çok daha uzun çalıştı.", "u|Peki sonu ne oldu?", "a|Bir gün yumuşak bir kuma saplandı. Yaklaşık altı yıl kaşif olarak çalıştı!"],
+    opportunity: ["u|Bu gezgin Spirit'in kardeşi mi?", "a|Evet! Opportunity de Mars'ta planlanandan çok uzun süre çalıştı.", "u|Ne buldu?", "a|Kayalarda demir mineralleri buldu. Bu, Mars'ta eskiden su olduğunun izi!"],
+    ingenuity: ["u|Bu küçük kanatlı şey ne?", "a|Bu Ingenuity! Mars'ta ilk kontrollü uçuşu yapan helikopter.", "u|Ne kadar uçtu?", "a|Tam 72 kez uçtu! Her uçuş bir ilkti."],
+    curiosity: ["u|Bu gezgin ne yapıyor?", "a|Bu Curiosity! Gale Krateri'nde kayaları inceliyor.", "u|Mars'ta ne arıyor?", "a|Eskiden suyun olup olmadığını ve yaşam izlerini arıyor."],
+    perseverance: ["u|Bu gezgin kayaları nerede saklıyor?", "a|Bu Perseverance! Kaya örneklerini tüplerde saklıyor.", "u|Kaç tüp taşıyor?", "a|43 tüp! Bazılarını ileride Dünya'ya getirmeyi planlıyorlar."],
+    venera9: ["u|Venüs'te ne var?", "a|Bu Venera 9! 1975'te Venüs'e inen ve oradan ilk fotoğrafları gönderen araç.", "u|Venüs çok sıcak mı?", "a|Evet, çok sıcak ve basınçlı. Araç oraya dayanabildi!"],
+    venera13: ["u|Bu araç Venüs'te ne yaptı?", "a|Venera 13! Renkli bir panorama çekti ve toprağı analiz etti.", "u|Ne kadar çalıştı?", "a|Yaklaşık iki saat. Çok kısa ama çok değerli bir süreydi!"],
+    venera14: ["u|Bu Venera 13'ün kardeşi mi?", "a|Evet, Venera 14! Birkaç gün sonra Venüs'e indi.", "u|Ne kadar çalıştı?", "a|Yaklaşık bir saat. Yüzeyin görüntülerini gönderdi."],
+    huygens: ["u|Titan'a inen araç hangisi?", "a|Huygens! Satürn'ün uydusu Titan'a inen tek araç.", "u|Titan nasıl bir yer?", "a|Kalın bir atmosferi ve buzdan çakıllar var. Huygens 2005'te oraya indi."],
+    surveyor1: ["u|Ay'a inen ilk ABD aracı bu mu?", "a|Evet, Surveyor 1! 1966'da Ay'a yumuşak iniş yapan ilk araç.", "u|Ne yaptı?", "a|Ay toprağının ne kadar sağlam olduğunu ölçtü ve fotoğraf gönderdi."],
+    surveyor7: ["u|Bu Surveyor'ın sonuncusu mu?", "a|Evet! Surveyor 7, 1968'de Tycho Krateri'ne indi.", "u|Krater yakınında ne yaptı?", "a|Toprağı kazıp inceledi ve fotoğraflar gönderdi."],
+    apollo12: ["u|Bu parça ne?", "a|Apollo 12'nin iniş kademesi, Intrepid! 1969'da Ay'a indi.", "u|Yakınında ne vardı?", "a|Surveyor 3! Astronotlar oradaki kamerayı Dünya'ya getirdi."],
+    phoenix: ["u|Bu iniş aracı Mars'ta ne yaptı?", "a|Bu Phoenix! 2008'de Mars'ın kuzeyinde toprağı kazdı.", "u|Ne buldu?", "a|Toprağın altında su buzu olduğunu gösterdi!"],
+    insight: ["u|Bu araç yüzeyde gezdi mi?", "a|Hayır! InSight yerinde durdu ve Mars'ın içini dinledi.", "u|Ne dinledi?", "a|Sismometresiyle Mars'taki depremleri ve titreşimleri ölçtü."],
+    zhurong: ["u|Bu gezgin nereden geldi?", "a|Bu Zhurong! Çin'in Tianwen-1 görevinin Mars gezgini.", "u|Nerede çalıştı?", "a|Utopia Planitia'da. Yaklaşık bir yıl boyunca bölgeyi inceledi."],
+    pragyan: ["u|Bu gezgin Ay'ın neresinde?", "a|Bu Pragyan! Hindistan'ın Chandrayaan-3 görevinin gezgini.", "u|Nerede çalıştı?", "a|Ay'ın güney kutbu yakınında. Oradan ilk kez veri gönderdi!"]
+  },
+  en: {
+    apollo11: ["u|What is this big base?", "a|It's the Apollo 11 descent stage! It landed astronauts on the Moon in 1969.", "u|What happened next?", "a|The top part lifted off the Moon. This piece stayed in the Sea of Tranquility."],
+    surveyor3: ["u|Who is this white machine?", "a|It's Surveyor 3! A robot that made a soft landing on the Moon in 1967.", "u|What happened to it?", "a|Years later, astronauts came and brought its camera back to Earth."],
+    lunokhod1: ["u|What is this eight-wheeled vehicle?", "a|It's Lunokhod 1! The first Moon rover driven remotely from Earth.", "u|How far did it go?", "a|About 10.5 kilometers! It worked on the Moon for about eleven months."],
+    lunokhod2: ["u|Is this rover on the Moon too?", "a|Yes, this is Lunokhod 2! It worked in the Sea of Serenity.", "u|Who traveled the farthest?", "a|Lunokhod 2 covered the longest distance of any Moon rover: about 37 kilometers!"],
+    apollo15: ["u|Why is this rover so big?", "a|It's the Apollo 15 Lunar Rover! The first rover people drove on the Moon.", "u|Where did they drive?", "a|In Hadley Valley! The astronauts went very far with it."],
+    apollo16: ["u|Is this another Moon rover?", "a|Yes, Apollo 16's rover! It worked on the Descartes Highlands.", "u|What did they find there?", "a|They collected rock samples from the high parts of the Moon."],
+    apollo17: ["u|Did two astronauts drive this rover?", "a|Yes! It's the last rover people drove on the Moon, from Apollo 17.", "u|Where did they go?", "a|To Taurus-Littrow Valley! They drove about 35 kilometers."],
+    yutu2: ["u|Where did this little rover come from?", "a|It's Yutu-2! The rover of China's Chang'e-4 mission.", "u|Which side of the Moon did it work on?", "a|The far side, which never faces Earth! It scanned the ground below with radar."],
+    viking1: ["u|Is this lander on Mars?", "a|Yes, Viking 1! The first American spacecraft to land on Mars successfully.", "u|What did it do?", "a|It sent photos from the surface and did experiments in the soil."],
+    viking2: ["u|Where is Viking 2?", "a|It's Viking 1's twin! It landed on Utopia Planitia in Mars' north.", "u|How long did it work?", "a|About three years and seven months, sending data back."],
+    sojourner: ["u|What is this little box?", "a|It's Sojourner! The first rover to work on Mars.", "u|How far did it go?", "a|About 100 meters! It drove out of Pathfinder and studied rocks."],
+    spirit: ["u|Why is this rover still there?", "a|It's Spirit! It worked far longer than its planned three-month mission.", "u|What happened in the end?", "a|It got stuck in soft sand one day. It worked as a scientist for about six years!"],
+    opportunity: ["u|Is this rover Spirit's sibling?", "a|Yes! Opportunity also worked on Mars far longer than planned.", "u|What did it find?", "a|Iron minerals in the rocks. A clue that water once existed on Mars!"],
+    ingenuity: ["u|What is this little winged thing?", "a|It's Ingenuity! The helicopter that made the first controlled flight on Mars.", "u|How much did it fly?", "a|It flew 72 times! Every flight was a first."],
+    curiosity: ["u|What is this rover doing?", "a|It's Curiosity! It studies rocks in Gale Crater.", "u|What is it looking for on Mars?", "a|Signs that water once existed there, and traces of life."],
+    perseverance: ["u|Where does this rover keep its rocks?", "a|It's Perseverance! It stores rock samples in tubes.", "u|How many tubes does it carry?", "a|43 tubes! Some may be brought back to Earth one day."],
+    venera9: ["u|What is there on Venus?", "a|It's Venera 9! It landed on Venus in 1975 and sent the first photos from there.", "u|Is Venus very hot?", "a|Yes, very hot and high-pressure. The lander survived there!"],
+    venera13: ["u|What did this lander do on Venus?", "a|Venera 13! It took a color panorama and analyzed the soil.", "u|How long did it work?", "a|About two hours. A very short time, but very valuable!"],
+    venera14: ["u|Is this Venera 13's sibling?", "a|Yes, Venera 14! It landed on Venus a few days later.", "u|How long did it work?", "a|About an hour. It sent pictures of the surface."],
+    huygens: ["u|Which lander touched down on Titan?", "a|Huygens! The only lander that reached Titan, Saturn's moon.", "u|What is Titan like?", "a|It has a thick atmosphere and pebbles made of ice. Huygens landed there in 2005."],
+    surveyor1: ["u|Is this the first American lander on the Moon?", "a|Yes, Surveyor 1! The first to make a soft landing on the Moon, in 1966.", "u|What did it do?", "a|It measured how strong the Moon's soil is and sent photos."],
+    surveyor7: ["u|Is this the last Surveyor?", "a|Yes! Surveyor 7 landed at Tycho Crater in 1968.", "u|What did it do near the crater?", "a|It dug into the soil and studied it, and sent photos."],
+    apollo12: ["u|What is this part?", "a|It's the Apollo 12 descent stage, Intrepid! It landed on the Moon in 1969.", "u|What was nearby?", "a|Surveyor 3! The astronauts brought its camera back to Earth."],
+    phoenix: ["u|What did this lander do on Mars?", "a|It's Phoenix! In 2008 it dug into the soil in Mars' north.", "u|What did it find?", "a|It showed there is water ice under the soil!"],
+    insight: ["u|Did this lander drive on the surface?", "a|No! InSight stayed in one place and listened to Mars' inside.", "u|What did it listen to?", "a|Its seismometer measured marsquakes and vibrations on Mars."],
+    zhurong: ["u|Where did this rover come from?", "a|It's Zhurong! The Mars rover of China's Tianwen-1 mission.", "u|Where did it work?", "a|In Utopia Planitia. It explored the area for about a year."],
+    pragyan: ["u|Where on the Moon is this rover?", "a|It's Pragyan! The rover of India's Chandrayaan-3 mission.", "u|Where did it work?", "a|Near the Moon's south pole. It sent data from there for the first time!"]
+  }
+};
+
+let kidState = { id: null, step: 1, quiz: null, qi: 0, score: 0, sel: null };
+function kidsPanel(m) {
+  if (kidState.id !== m.id) kidState = { id: m.id, step: 1, quiz: null, qi: 0, score: 0, sel: null };
+  const en = state.lang === "en";
+  const lines = DLG[en ? "en" : "tr"][m.id] || [];
+  const who = { u: en ? "Zipzip 👽" : "Zıpzıp 👽", a: "Astro 🧑‍🚀" };
+  if (kidState.quiz) {
+    const qs = kidState.quiz;
+    if (kidState.qi >= qs.length) {
+      return `<div class="kid-quiz"><p class="eyebrow">${en ? "Result" : "Sonuç"}</p>
+        <div class="big">${kidState.score} / ${qs.length}</div>
+        <p>${kidState.score === qs.length ? (en ? "Wonderful! You're a space explorer!" : "Harika! Sen bir uzay kaşifisin!") : (en ? "Good job! Talk to them again to learn more." : "Aferin! Tekrar konuşarak daha çok şey öğrenebilirsin.")}</p>
+        <button class="btn btn-solid" type="button" data-kid-restart>${en ? "Talk again" : "Baştan konuş"}</button></div>`;
+    }
+    const q = qs[kidState.qi], sel = kidState.sel;
+    return `<div class="kid-quiz">
+      <p class="eyebrow">Quiz ${kidState.qi + 1} / ${qs.length}</p>
+      <h3 class="qtext">${q.q}</h3>
+      <div class="opts">${q.opts.map((o, i) => `<button class="opt ${sel !== null ? (i === q.ans ? "right" : (i === sel ? "wrong" : "")) : ""}" type="button" data-kid-opt="${i}" ${sel !== null ? "disabled" : ""}>${o}</button>`).join("")}</div>
+      ${sel !== null ? `<p class="feedback">${sel === q.ans ? (en ? "Correct! ⭐" : "Doğru! ⭐") : (en ? "Not quite." : "Olmadı.")}</p>
+        <button class="btn btn-solid" type="button" data-kid-qnext>${kidState.qi + 1 >= qs.length ? (en ? "See result" : "Sonuç") : (en ? "Next" : "Sonraki")}</button>` : ""}
+    </div>`;
+  }
+  const shown = lines.slice(0, kidState.step).map(l => {
+    const i = l.indexOf("|"), sp = l.slice(0, i), txt = l.slice(i + 1);
+    return `<div class="kid-msg ${sp === "u" ? "kid-u" : "kid-a"}"><b>${who[sp]}</b><span>${txt}</span></div>`;
+  }).join("");
+  const action = kidState.step < lines.length
+    ? `<button class="btn btn-solid" type="button" data-kid-next>${en ? "Continue" : "Devam →"}</button>`
+    : `<button class="btn btn-solid" type="button" data-kid-quizstart>${en ? "Quiz time!" : "Quiz zamanı!"}</button>`;
+  return `<div class="kid-talk">${shown}</div><div class="kid-action">${action}</div>`;
+}
+function genKidQuiz(m) {
+  const en = state.lang === "en";
+  const others = machines.filter(x => x.id !== m.id);
+  const shuffle = a => a.slice().sort(() => Math.random() - 0.5);
+  const distinct = (vals, n) => shuffle([...new Set(vals)]).slice(0, n);
+  const mk = (q, correct, pool) => {
+    const opts = shuffle([correct, ...pool.filter(d => d !== correct)].slice(0, 3));
+    return { q, opts, ans: opts.indexOf(correct) };
+  };
+  const allBodies = ["ay", "mars", "venus", "titan"].map(b => bodyName(b));
+  const yr = String(m.year);
+  return [
+    mk(en ? "Which world is this machine on?" : "Bu makine hangi gök cisminde?", bodyName(m.body), allBodies.filter(x => x !== bodyName(m.body))),
+    mk(en ? "What year did it land or start?" : "Bu makine hangi yılda indi?", yr, distinct(others.map(x => String(x.year)).filter(y => y !== yr), 2)),
+    mk(en ? "Where is it?" : "Bu makine nerede?", mf(m, "place"), distinct(others.map(x => mf(x, "place")).filter(p => p !== mf(m, "place")), 2)),
+    mk(en ? "What kind of machine is it?" : "Bu makine ne tür bir araç?", mf(m, "kind"), distinct(others.map(x => mf(x, "kind")).filter(k => k !== mf(m, "kind")), 2)),
+    mk(en ? "What is its last status?" : "Son durumu nedir?", mf(m, "status"), distinct(others.map(x => mf(x, "status")).filter(z => z !== mf(m, "status")), 2))
+  ];
+}
+function answerKidQ(i) {
+  if (!kidState.quiz || kidState.sel !== null) return;
+  const q = kidState.quiz[kidState.qi];
+  kidState.sel = i;
+  if (i === q.ans) { kidState.score++; addStars(1); }
+  renderPanel();
 }
 
 /* ================= BAŞLAT ================= */
