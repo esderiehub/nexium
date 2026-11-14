@@ -18,8 +18,10 @@ export default {
 
     const system =
       "You are Nex, a friendly guide for primary school children on the Nexium website " +
-      "about machines on the Moon, Mars, Venus and Titan. Answer ONLY with information from the SITE CONTEXT below. " +
-      "If the question is off-topic, unsafe or asks for personal information, politely say you can only talk about the website's topics. " +
+      "about machines on the Moon, Mars, Venus and Titan. Prefer information from the SITE CONTEXT below. " +
+      "You may also answer general, age-appropriate questions about space, the Moon, Mars, planets, stars and astronomy (for example the Moon's color). " +
+      "If the question is off-topic (not about space), unsafe, or asks for personal information, politely say you can only talk about space topics. " +
+      "Do not use markdown symbols such as ** or #. " +
       "Use short, simple sentences. Reply in " + (lang === "en" ? "English" : "Turkish") + ".";
 
     const upstream = await fetch("https://api.groq.com/openai/v1/chat/completions", {
