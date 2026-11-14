@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Ay ve Mars'taki on altı makinenin hikayesi. Nexium: the stories of sixteen machines on the Moon and Mars.">
+<meta name="description" content="Ay, Mars, Venüs ve Titan'daki 27 makinenin hikayesi. Nexium: the stories of 27 machines on the Moon, Mars, Venus and Titan.">
+<meta property="og:title" content="Nexium · Ay ve Mars'taki makineler">
+<meta property="og:description" content="27 makine hâlâ orada. Bazıları hâlâ konuşuyor.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://esderiehub.github.io/nexium/maps/moon.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 39 22 58 23 43 36 49 55 32 44 15 55 21 36 5 23 25 22Z' fill='%23fbbf24' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E">
 <title>Nexium · Ay ve Mars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +69,8 @@
   .topbar-inner { display: flex; align-items: stretch; gap: 24px; }
   .brand { display: flex; align-items: center; font-family: var(--serif); font-size: 1.12rem; white-space: nowrap; color: var(--text); padding: 14px 0; }
   .brand:hover { text-decoration: none; }
-  .nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1; justify-content: flex-end; }
+  .nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1; min-width: 0; justify-content: flex-start; }
+  .nav button { flex: none; }
   .nav::-webkit-scrollbar { display: none; }
   .nav button { background: none; border: none; padding: 18px 11px 16px; color: var(--muted); font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .2s, border-color .2s; }
   .nav button:hover { color: var(--text); }
@@ -103,7 +109,9 @@
   .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; border-radius: 50%; }
   .stage canvas.grabbing { cursor: grabbing; }
   .stage .real { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
-  .caption { margin: 14px 0 0; font-size: 12.5px; color: var(--dim); max-width: 62ch; }
+  .radio-hdr { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; letter-spacing: .06em; color: var(--accent); margin: 0 0 12px; }
+  .counter { margin: 0 0 6px; font-size: 14px; color: var(--muted); }
+  .caption { margin: 14px 0 0; font-size: 13px; color: var(--muted); max-width: 62ch; }
 
   .panel { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 440px; }
   .panel-img { aspect-ratio: 16 / 7; background-size: contain; background-repeat: no-repeat; background-position: center; background-color: var(--photo-bg); border-bottom: 1px solid var(--line); }
@@ -408,7 +416,8 @@
   <!-- GEZEGEN -->
   <div class="head" id="head-gezegen">
     <div class="wrap">
-      <h1 data-i18n="globe_title">Gezegeni döndür, makineyi bul</h1>
+      <h1 data-i18n="globe_title">27 makine hâlâ orada</h1>
+      <p class="counter" id="globe-count"></p>
     </div>
   </div>
   <section class="sec wrap" id="sec-gezegen">
@@ -469,6 +478,7 @@
         <button class="btn" data-filter="mars" aria-pressed="false" data-i18n="mars">Mars</button>
         <button class="btn" data-filter="venus" aria-pressed="false" data-i18n="venus">Venüs</button>
         <button class="btn" data-filter="titan" aria-pressed="false" data-i18n="titan">Titan</button>
+        <button class="btn" data-filter="nasa" aria-pressed="false" data-i18n="f_nasa">Sadece NASA</button>
         <button class="btn" data-filter="live" aria-pressed="false" data-i18n="f_live">Aktif</button>
         <button class="btn" data-filter="quiet" aria-pressed="false" data-i18n="f_quiet">Sessiz</button>
       </div>
@@ -615,7 +625,8 @@ const T = {
     nav_globe: "Gezegen", nav_machines: "Makineler", nav_time: "Zaman", nav_science: "Bilim",
     nav_figures: "Rakamlar", nav_archive: "NASA Arşivi", nav_quiz: "Quiz", nav_glossary: "Sözlük",
     globe_eyebrow: "Ay ve Mars",
-    globe_title: "Gezegeni döndür, makineyi bul",
+    globe_title: "27 makine hâlâ orada",
+    globe_count: (a, q) => `Şu an aktif: ${a} · Sessiz: ${q}`,
     globe_lede: "On altı makine, 1967'den bugüne. Küreyi sürükleyin, bir noktaya tıklayın; makinenin hikayesi yanda açılsın.",
     moon: "Ay", mars: "Mars", venus: "Venüs", titan: "Titan",
     view_real: "Gerçek görüntü", view_sim: "Küreye dön",
@@ -642,7 +653,7 @@ const T = {
     cat_title: "Ay ve Mars'taki makineler",
     cat_lede: "İniş aracı, gezgin ve helikopter. Her kart makinenin fotoğrafını, gezegendeki yerini ve bugünkü durumunu gösterir.",
     search_ph: "Makine, yer ya da tür ara",
-    f_all: "Tümü", f_live: "Aktif", f_quiet: "Sessiz",
+    f_all: "Tümü", f_live: "Aktif", f_quiet: "Sessiz", f_nasa: "Sadece NASA",
     no_match: "Bu arama için makine bulunamadı.",
     time_eyebrow: "Kronoloji",
     time_title: "1967'den bugüne",
@@ -710,7 +721,8 @@ const T = {
     nav_globe: "Globe", nav_machines: "Machines", nav_time: "Timeline", nav_science: "Science",
     nav_figures: "Figures", nav_archive: "NASA Archive", nav_quiz: "Quiz", nav_glossary: "Glossary",
     globe_eyebrow: "The Moon and Mars",
-    globe_title: "Turn the globe, find the machine",
+    globe_title: "27 machines are still out there",
+    globe_count: (a, q) => `Active now: ${a} · Quiet: ${q}`,
     globe_lede: "Sixteen machines, from 1967 to today. Drag the globe and click a point; the machine's story opens beside it.",
     moon: "Moon", mars: "Mars", venus: "Venus", titan: "Titan",
     view_real: "Real image", view_sim: "Back to globe",
@@ -737,7 +749,7 @@ const T = {
     cat_title: "Machines on the Moon and Mars",
     cat_lede: "Landers, rovers and a helicopter. Each card shows the machine's photo, its place on the planet and its current status.",
     search_ph: "Search machine, place or type",
-    f_all: "All", f_live: "Active", f_quiet: "Quiet",
+    f_all: "All", f_live: "Active", f_quiet: "Quiet", f_nasa: "NASA only",
     no_match: "No machines match this search.",
     time_eyebrow: "Chronology",
     time_title: "From 1967 to today",
@@ -983,6 +995,7 @@ const machines = [
     story:"Rampadan yavaşça indim. Kutbun soğuk gölgesinde yeni bir yol açtım, bir gün güneşin ışığıyla çalıştım, sonra gece geldi." }
 ];
 
+const NON_NASA = ["lunokhod1", "lunokhod2", "yutu2", "pragyan", "zhurong", "venera9", "venera13", "venera14", "huygens"];
 const byId = Object.fromEntries(machines.map(m => [m.id, m]));
 
 /* Makinelerin İngilizce metinleri (TR metinler yukarıda kalır) */
@@ -1132,7 +1145,7 @@ function mf(m, f) {
 /* Makine bilgi kutusu: "Bilgi:" etiketi altında gösterilir */
 const FACT = {
   tr: {
-    apollo11: "Yerinde bırakılan lazer köşe yansıtıcıya Ay'dan gönderilen ışık hâlâ geri döner; Ay'ın uzaklığı bu şekilde ölçülür.",
+    apollo11: "Astronotların Ay'a kurduğu lazer yansıtıcıya Dünya'dan gönderilen ışık hâlâ geri döner; Ay'ın uzaklığı bu şekilde ölçülür.",
     surveyor3: "Surveyor programının beş başarılı Ay iniş aracından biriydi. Apollo 12 astronotları kamerasının bir bölümünü Dünya'ya getirdi.",
     lunokhod1: "Lunokhod 1, 17 Kasım 1970'te Luna 17 ile Ay'a indi ve yaklaşık on bir ay çalıştı.",
     lunokhod2: "Lunokhod 2, 1973'te Le Monnier Krateri yakınına indi ve Ay gezginleri arasında en uzun mesafeyi kat etti.",
@@ -1161,7 +1174,7 @@ const FACT = {
     pragyan: "Pragyan, Ay'ın güney kutbu yakınında çalıştı; bu bölge ilk kez doğrudan ölçüldü."
   },
   en: {
-    apollo11: "Light sent from the Moon still returns from the corner reflector left behind; this is how the Earth–Moon distance is measured.",
+    apollo11: "Light sent from Earth still returns from the reflector the astronauts set up on the Moon; this is how the Earth–Moon distance is measured.",
     surveyor3: "Surveyor 3 was one of five successful Surveyor landers on the Moon. Apollo 12 astronauts brought part of its camera back to Earth.",
     lunokhod1: "Lunokhod 1 landed on November 17, 1970, carried by Luna 17, and worked for about eleven months.",
     lunokhod2: "Lunokhod 2 landed near Le Monnier Crater in 1973 and covered the longest distance of any Moon rover.",
@@ -1558,8 +1571,10 @@ class Globe {
     };
     c.addEventListener("pointerup", end);
     c.addEventListener("pointercancel", end);
-    c.addEventListener("pointerleave", () => { if (this.hover) { this.hover = null; this.dirty = true; } });
+    c.addEventListener("pointerleave", () => { this.engaged = false; if (this.hover) { this.hover = null; this.dirty = true; } });
+    c.addEventListener("pointerdown", () => { this.engaged = true; });
     c.addEventListener("wheel", e => {
+      if (!(e.ctrlKey || e.metaKey || this.engaged)) return;
       e.preventDefault();
       this.tZoom = clamp(this.tZoom * (e.deltaY < 0 ? 1.12 : 0.9), 1, 3);
       this.lastAct = performance.now();
@@ -1689,7 +1704,13 @@ class Globe {
       const isSel = state.selected === m.id, isHov = this.hover === m.id;
       ctx.beginPath();
       ctx.arc(X, Y, (isSel ? 6 : 4.5) * fs, 0, Math.PI * 2);
-      ctx.fillStyle = this.body === "ay" ? "#f4f0e8" : "#f2b48c";
+      if (m.active) {
+        ctx.beginPath(); ctx.arc(X, Y, 10 * fs, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(110,231,160,0.85)"; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(X, Y, (isSel ? 6 : 4.5) * fs, 0, Math.PI * 2);
+      ctx.fillStyle = m.active ? "#6ee7a0" : (m.endYear ? "#7d8594" : (this.body === "ay" ? "#f4f0e8" : "#f2b48c"));
       ctx.fill();
       ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(0,0,0,0.7)"; ctx.stroke();
       if (isSel) {
@@ -1697,7 +1718,7 @@ class Globe {
         ctx.strokeStyle = "#c9955a"; ctx.lineWidth = 1.5; ctx.stroke();
       }
       if (isSel || isHov) {
-        const label = mf(m, "name");
+        const label = mf(m, "name") + (!m.active && m.endYear ? (state.lang === "en" ? " · last signal: " : " · son sinyal: ") + m.endYear : "");
         ctx.font = `600 ${Math.round(13 * fs)}px Inter, system-ui, sans-serif`;
         ctx.lineWidth = 3; ctx.strokeStyle = "rgba(0,0,0,0.75)";
         ctx.strokeText(label, X + 16 * fs, Y + 4 * fs);
@@ -1722,7 +1743,7 @@ function initLang() {
   try { const s = localStorage.getItem("sg-lang"); if (s === "en" || s === "tr") return s; } catch (e) {}
   return "tr";
 }
-const state = { lang: "tr", tab: "gezegen", body: "ay", selected: null, panel: "ozet", spin: !compact, filter: "all", q: "", year: 2026, view: "sim" };
+const state = { lang: "tr", tab: "gezegen", body: "ay", selected: null, panel: "hikaye", spin: !compact, filter: "all", q: "", year: 2026, view: "sim" };
 const L = key => T[state.lang][key];
 const bodyName = b => L({ ay: "moon", mars: "mars", venus: "venus", titan: "titan" }[b]);
 
@@ -1737,8 +1758,14 @@ function applyI18n() {
   document.getElementById("canvas-mars").setAttribute("aria-label", L("mars") + " globe");
   document.getElementById("nasa-q").value = N.q;
 }
+function updateGlobeCount() {
+  const el = document.getElementById("globe-count");
+  if (!el) return;
+  const a = machines.filter(m => m.active).length;
+  el.textContent = L("globe_count")(a, machines.length - a);
+}
 function setLang(l) {
-  setTimeout(() => { applyTheme(currentTheme()); applyMode(currentMode()); renderBadges(); }, 0);
+  setTimeout(() => { applyTheme(currentTheme()); applyMode(currentMode()); renderBadges(); updateGlobeCount(); }, 0);
   if (l !== "tr" && l !== "en") return;
   state.lang = l;
   try { localStorage.setItem("sg-lang", l); } catch (e) {}
@@ -1819,7 +1846,7 @@ function renderPanel() {
     credit.hidden = false;
   });
   head.innerHTML = `<p class="eyebrow">${bodyName(m.body)} · ${m.year}</p><h3>${mf(m, "name")}</h3>`;
-  const labels = [["ozet", L("tab_sum")], ["ne", L("tab_what")], ["neden", L("tab_why")], ["hikaye", L("tab_story")]];
+  const labels = [["hikaye", L("tab_story")], ["ozet", L("tab_sum")], ["ne", L("tab_what")], ["neden", L("tab_why")]];
   tabs.innerHTML = labels.map(([k, l]) =>
     `<button role="tab" data-ptab="${k}" aria-selected="${state.panel === k}">${l}</button>`).join("");
   let content;
@@ -1839,7 +1866,7 @@ function renderPanel() {
   } else if (state.panel === "neden") {
     content = `<p>${mf(m, "why")}</p>`;
   } else {
-    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p>${mf(m, "story")}</p></div>`;
+    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="radio-hdr">▮ SON İLETİM · ${m.year} · ${mf(m, "place")}</p><p>${mf(m, "story")}</p></div>`;
   }
   body.className = "panel-body";
   body.innerHTML = content;
@@ -1885,6 +1912,7 @@ function renderCards() {
   const q = state.q.trim().toLowerCase();
   const list = machines.filter(m => {
     if (["ay", "mars", "venus", "titan"].includes(state.filter) && m.body !== state.filter) return false;
+    if (state.filter === "nasa" && NON_NASA.includes(m.id)) return false;
     if (state.filter === "live" && !m.active) return false;
     if (state.filter === "quiet" && !m.endYear) return false;
     if (!q) return true;
@@ -2731,7 +2759,7 @@ function kidsStory(m) {
   for (let i = 0; i < sents.length; i += 2) pages.push(sents.slice(i, i + 2).join(" "));
   const p = Math.max(0, Math.min(storyPage, pages.length - 1));
   storyPage = p;
-  return `<div class="story kids-story">
+  return `<div class="story kids-story"><p class="radio-hdr">▮ SON İLETİM · ${m.year} · ${mf(m, "place")}</p>
     <p class="page-text">${pages[p]}</p>
     <div class="pager">
       <button class="btn" data-spage="-1" ${p === 0 ? "disabled" : ""}>${K.prev}</button>
@@ -2819,6 +2847,7 @@ renderInstruments();
 renderBars();
 renderStats();
 renderEras();
+updateGlobeCount();
 updateStars();
 renderBadges();
 renderGameModes();
