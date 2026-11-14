@@ -2834,6 +2834,9 @@ function answerNex(text) {
   return K.none;
 }
 const NEX_API = "https://bitter-surf-9863.ddemireser.workers.dev/";
+function cleanAnswer(t) {
+  return String(t).replace(/\*\*/g, "").replace(/^\s*[-*]\s+/gm, "• ").replace(/^#+\s*/gm, "").trim();
+}
 function siteContext() {
   const lines = machines.map(m => `${mf(m, "name")} | ${m.year}${m.endYear && m.endYear !== m.year ? "-" + m.endYear : ""} | ${mf(m, "place")} | ${mf(m, "short")}`);
   return lines.join("\n").slice(0, 3800);
@@ -2850,7 +2853,7 @@ async function sendChat(text) {
       body: JSON.stringify({ question: t, lang: state.lang === "en" ? "en" : "tr", context: siteContext() })
     });
     const data = r.ok ? await r.json() : null;
-    chatAdd("bot", data && data.answer ? data.answer : local());
+    chatAdd("bot", data && data.answer ? cleanAnswer(data.answer) : local());
   } catch (e) {
     chatAdd("bot", local());
   }
