@@ -23,6 +23,16 @@
   }
   /* Koyu tema: düğmeyle açılır (html[data-theme="dark"]) */
   html[data-theme="dark"] {
+    --bg: #0b0c0e; --surface: #111317; --surface-2: #171a1f;
+    --line: #242830; --line-soft: #1b1f25;
+    --text: #ebe9e3; --text-2: #c9c6be; --muted: #8f8c84; --dim: #5d5b56;
+    --accent: #c9955a; --ok: #86b596; --bad: #c4877b;
+    --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --topbar-bg: rgba(11,12,14,0.94); --photo-bg: #0e0f12; --frame-bg: #050506;
+    --tag-bg: rgba(11,12,14,0.78); --btn-text: #15110a; --btn-hover: #d7a46c; --card-hover: #353b46;
+    color-scheme: dark;
+  }
+  html[data-theme="dark"][data-mode="kids"] {
     --bg: #0a1424; --surface: #0f1c33; --surface-2: #14233d;
     --line: #1f3050; --line-soft: #172742;
     --text: #e6edf7; --text-2: #c3cfe0; --muted: #8ea0bd; --dim: #5d6f8c;
@@ -319,8 +329,6 @@
   html[data-mode="kids"] .opt { font-size: 18px; padding: 14px 18px; }
   html[data-mode="kids"] .nav [data-tab="zaman"], html[data-mode="kids"] .nav [data-tab="rakamlar"],
   html[data-mode="kids"] .nav [data-tab="goruntuler"], html[data-mode="kids"] .nav [data-tab="kaynakca"],
-  html[data-mode="kids"] [data-body="venus"], html[data-mode="kids"] [data-body="titan"],
-  html[data-mode="kids"] [data-filter="venus"], html[data-mode="kids"] [data-filter="titan"],
   html[data-mode="kids"] [data-ptab="neden"], html[data-mode="kids"] [data-ptab="hikaye"],
   html[data-mode="kids"] [data-game="order"], html[data-mode="kids"] [data-game="fill"] { display: none !important; }
 </style>
