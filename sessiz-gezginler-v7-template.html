@@ -329,8 +329,33 @@
   html[data-mode="kids"] .opt { font-size: 18px; padding: 14px 18px; }
   html[data-mode="kids"] .nav [data-tab="zaman"], html[data-mode="kids"] .nav [data-tab="rakamlar"],
   html[data-mode="kids"] .nav [data-tab="goruntuler"], html[data-mode="kids"] .nav [data-tab="kaynakca"],
-  html[data-mode="kids"] [data-ptab="neden"], html[data-mode="kids"] [data-ptab="hikaye"],
+  html[data-mode="kids"] [data-ptab="neden"],
   html[data-mode="kids"] [data-game="order"], html[data-mode="kids"] [data-game="fill"] { display: none !important; }
+  /* Çocuk modu: Sami, yıldızlar, rozetler, hikâye sayfaları */
+  .mascot { position: fixed; right: 18px; bottom: 18px; z-index: 120; width: 72px; height: 72px; border-radius: 50%; border: 0; padding: 0; background: #f59e0b; box-shadow: 0 6px 18px rgba(0,0,0,.25); display: none; align-items: center; justify-content: center; cursor: pointer; }
+  .mascot svg { width: 50px; height: 50px; }
+  html[data-mode="kids"] .mascot { display: flex; }
+  .chat { position: fixed; right: 18px; bottom: 104px; z-index: 121; width: min(340px, calc(100vw - 36px)); height: 460px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+  .chat-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-weight: 600; }
+  .chat-x { border: 0; background: transparent; font-size: 22px; color: var(--muted); padding: 0 4px; }
+  .chat-log { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { max-width: 86%; padding: 9px 12px; border-radius: 14px; font-size: 15px; line-height: 1.5; }
+  .msg.bot { background: var(--surface-2); align-self: flex-start; color: var(--text); }
+  .msg.me { background: #f59e0b; color: #1a1200; align-self: flex-end; }
+  .chat-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px; }
+  .chip { font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); }
+  .chat-form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .chat-form input { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text); }
+  .chat-badges { padding: 8px 12px; border-top: 1px solid var(--line); font-size: 13px; }
+  .badges-title { margin: 0 0 4px; font-weight: 600; }
+  .badge { display: inline-block; margin: 2px 4px 2px 0; padding: 3px 9px; border-radius: 999px; background: #fde68a; color: #1a1200; }
+  .stars { display: none; align-items: center; margin: auto 8px; padding: 5px 11px; border-radius: 999px; background: #fde68a; color: #1a1200; font-weight: 600; font-size: 14px; }
+  html[data-mode="kids"] .stars { display: inline-flex; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; z-index: 150; background: #1a1200; color: #fde68a; padding: 12px 18px; border-radius: 999px; font-weight: 600; }
+  html:not([data-mode="kids"]) .chat, html:not([data-mode="kids"]) .toast { display: none !important; }
+  .page-text { font-size: 19px; line-height: 1.8; }
+  .kids-story .pager { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  html[data-mode="kids"] [data-ptab="neden"] { display: none !important; }
 </style>
 </head>
 <body>
@@ -360,6 +385,7 @@
       <button role="tab" data-tab="sozluk" aria-selected="false" data-i18n="nav_glossary">Sözlük</button>
       <button role="tab" data-tab="kaynakca" aria-selected="false" data-i18n="nav_sources">Kaynakça</button>
     </nav>
+    <span class="stars" id="stars" title="Yıldız"></span>
     <div class="lang" role="group" aria-label="Language">
       <button class="mode-toggle" data-mode-toggle type="button">Basit</button>
       <button class="theme-toggle" data-theme-toggle type="button" aria-label="Tema">
@@ -1747,6 +1773,8 @@ function applyRealImage() {
 function selectMachine(id, goTab) {
   const m = byId[id];
   if (!m) return;
+  markVisited(id);
+  storyPage = 0;
   if (goTab) showTab("gezegen");
   setBody(m.body);
   state.selected = id;
@@ -1806,7 +1834,7 @@ function renderPanel() {
   } else if (state.panel === "neden") {
     content = `<p>${mf(m, "why")}</p>`;
   } else {
-    content = `<div class="story"><p class="note">${L("story_note")}</p><p>${mf(m, "story")}</p></div>`;
+    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="note">${L("story_note")}</p><p>${mf(m, "story")}</p></div>`;
   }
   body.className = "panel-body";
   body.innerHTML = content;
@@ -1990,7 +2018,7 @@ function showAnswer(i) {
 function answerQuiz(i) {
   if (qAns !== null) return;
   qAns = i;
-  if (i === quiz[qi].answer) qScore++;
+  if (i === quiz[qi].answer) { qScore++; addStars(1); }
   showAnswer(i);
 }
 
@@ -2122,6 +2150,7 @@ function renderOrder() {
   if (!ordState.done && ordState.picked.length === ids.length) {
     ordState.done = true;
     ordState.ok = ordState.picked.every((id, i) => id === correct[i]);
+    if (ordState.ok) addStars(3);
     renderOrder();
   }
 }
@@ -2159,7 +2188,7 @@ function submitWordle(raw) {
   const g = normWord(raw);
   if (g.length !== wdState.t.length) { wdState.msg = L("wd_bad")(wdState.t.length); return renderWordle(); }
   wdState.rows.push({ word: g, res: scoreGuess(g, wdState.t) });
-  if (g === wdState.t) { wdState.over = true; wdState.msg = L("wd_win"); }
+  if (g === wdState.t) { wdState.over = true; wdState.msg = L("wd_win"); addStars(3); }
   else if (wdState.rows.length >= 6) { wdState.over = true; wdState.msg = L("wd_lose"); }
   else wdState.msg = "";
   renderWordle();
@@ -2194,10 +2223,16 @@ function answerFill(v) {
   const it = (FILL[state.lang] || FILL.tr)[flState.i];
   const ok = foldText(v) === foldText(it.a);
   flState.answered = ok;
-  if (ok) flState.score++;
+  if (ok) { flState.score++; addStars(1); }
   renderFill();
 }
 document.addEventListener("submit", e => {
+  if (e.target.id === "chat-form") {
+    e.preventDefault();
+    const inp = document.getElementById("chat-input");
+    sendChat(inp.value);
+    inp.value = "";
+  }
   if (e.target.id === "wd-form") { e.preventDefault(); submitWordle(document.getElementById("wd-input").value); }
   if (e.target.id === "fl-form") { e.preventDefault(); answerFill(document.getElementById("fl-input").value); }
 });
@@ -2374,6 +2409,10 @@ document.addEventListener("click", e => {
   if ((el = t.closest("[data-lang]"))) return setLang(el.dataset.lang);
   if (t.closest("[data-theme-toggle]")) return toggleTheme();
   if ((el = t.closest("[data-mode-choice]"))) return chooseMode(el.dataset.modeChoice);
+  if (t.closest("[data-mascot]")) return toggleChat();
+  if (t.closest("[data-chat-close]")) { document.getElementById("chat").hidden = true; return; }
+  if ((el = t.closest("[data-chip]"))) return sendChat(el.dataset.chip);
+  if ((el = t.closest("[data-spage]"))) { storyPage += Number(el.dataset.spage); return renderPanel(); }
   if (t.closest("[data-mode-toggle]")) return chooseMode(currentMode() === "kids" ? "std" : "kids");
   if ((el = t.closest("[data-go]"))) return selectMachine(el.dataset.go, true);
   if ((el = t.closest("[data-ptab]"))) { state.panel = el.dataset.ptab; return renderPanel(); }
@@ -2519,6 +2558,159 @@ try { savedMode = localStorage.getItem("nexium-mode"); } catch (e) {}
 applyMode(savedMode === "kids" ? "kids" : "std");
 document.getElementById("mode-gate").hidden = savedMode === "kids" || savedMode === "std";
 
+/* ================= ÇOCUK MODU: SAMİ, YILDIZ, ROZET, HİKÂYE ================= */
+const KT = {
+  tr: {
+    greet: "Merhaba! Ben Sami. Makineler, gezegenler ve terimler hakkında soru sorabilirsin. Sadece bu sitedeki bilgilerle cevap veririm.",
+    none: "Bunu tam anlayamadım. Bir makine adı, gezegen ya da terim yazmayı dene!",
+    moonIntro: "Ay, Dünya'nın tek doğal uydusu. Üzerinde birçok makine çalıştı.",
+    marsIntro: "Mars, kızıl rengiyle bilinen komşu gezegenimiz. Birçok gezgin orada çalıştı.",
+    venusIntro: "Venüs çok sıcak ve kalın bulutlu bir gezegen. Venera araçları oraya indi.",
+    titanIntro: "Titan, Satürn'ün uydusu. Kalın bir atmosferi var. Huygens oraya indi.",
+    quizTip: "Quiz sekmesinde soruları çözerek yıldız kazanabilirsin!",
+    starsTip: "Doğru cevaplar yıldız kazandırır. Kazandığın rozetler bu pencerede görünür.",
+    list: (b, names) => `${b} üzerindeki makineler: ${names}.`,
+    all: "Tüm gezegenler",
+    bodies: { ay: "Ay", mars: "Mars", venus: "Venüs", titan: "Titan" },
+    chips: ["Curiosity nerede?", "Ay'da hangi makineler var?", "Yutu-2 ne yaptı?", "Venüs'te hangi makineler var?"],
+    badges: "Rozetlerim", noBadges: "Henüz rozet yok.", earned: "Yeni rozet:",
+    page: (i, n) => `Sayfa ${i} / ${n}`, prev: "← Önceki", next: "Sonraki →"
+  },
+  en: {
+    greet: "Hello! I'm Sami. Ask me about machines, planets and terms. I only answer with information from this site.",
+    none: "I couldn't quite understand that. Try a machine name, a planet or a term!",
+    moonIntro: "The Moon is Earth's only natural satellite. Many machines have worked on it.",
+    marsIntro: "Mars is our red neighbor planet. Many rovers have worked there.",
+    venusIntro: "Venus is a very hot planet with thick clouds. Venera landers reached its surface.",
+    titanIntro: "Titan is Saturn's moon with a thick atmosphere. Huygens landed there.",
+    quizTip: "Solve the questions in the Quiz tab to earn stars!",
+    starsTip: "Correct answers earn stars. Your badges appear in this window.",
+    list: (b, names) => `Machines on ${b}: ${names}.`,
+    all: "All planets",
+    bodies: { ay: "the Moon", mars: "Mars", venus: "Venus", titan: "Titan" },
+    chips: ["Where is Curiosity?", "Which machines are on the Moon?", "What did Yutu-2 do?", "Which machines are on Venus?"],
+    badges: "My badges", noBadges: "No badges yet.", earned: "New badge:",
+    page: (i, n) => `Page ${i} / ${n}`, prev: "← Previous", next: "Next →"
+  }
+};
+const KTL = () => KT[state.lang === "en" ? "en" : "tr"];
+const BADGES = [
+  { id: "first", tr: "İlk yıldız", en: "First star", ok: () => stars >= 1 },
+  { id: "moon", tr: "Ay Kaşifi", en: "Moon Explorer", ok: () => visitedCount("ay") >= 5 },
+  { id: "mars", tr: "Mars Gezgini", en: "Mars Rover", ok: () => visitedCount("mars") >= 5 },
+  { id: "s10", tr: "Yıldız Avcısı", en: "Star Hunter", ok: () => stars >= 10 }
+];
+function loadJSON(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v === null ? d : v; } catch (e) { return d; } }
+function saveJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+let stars = loadJSON("nexium-stars", 0), visited = loadJSON("nexium-visited", []), badges = loadJSON("nexium-badges", []);
+let storyPage = 0;
+function visitedCount(body) { return visited.filter(id => byId[id] && byId[id].body === body).length; }
+function markVisited(id) { if (!visited.includes(id)) { visited.push(id); saveJSON("nexium-visited", visited); checkBadges(); } }
+function addStars(n) { stars += n; saveJSON("nexium-stars", stars); updateStars(); checkBadges(); }
+function updateStars() { const el = document.getElementById("stars"); if (el) el.textContent = "★ " + stars; }
+function toast(msg) {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(t._h); t._h = setTimeout(() => { t.hidden = true; }, 2600);
+}
+function checkBadges() {
+  for (const b of BADGES) {
+    if (!badges.includes(b.id) && b.ok()) {
+      badges.push(b.id); saveJSON("nexium-badges", badges);
+      toast(KTL().earned + " " + (state.lang === "en" ? b.en : b.tr));
+      renderBadges();
+    }
+  }
+}
+function renderBadges() {
+  const el = document.getElementById("badges");
+  if (!el) return;
+  const K = KTL();
+  el.innerHTML = `<p class="badges-title">${K.badges}</p>` + (badges.length
+    ? badges.map(id => { const b = BADGES.find(x => x.id === id); return `<span class="badge">🏅 ${state.lang === "en" ? b.en : b.tr}</span>`; }).join("")
+    : `<p>${K.noBadges}</p>`);
+}
+function chatAdd(who, text) {
+  const log = document.getElementById("chat-log");
+  const d = document.createElement("div");
+  d.className = "msg " + who; d.textContent = text;
+  log.appendChild(d); log.scrollTop = log.scrollHeight;
+}
+function setChips(list) {
+  document.getElementById("chat-chips").innerHTML = list.map(t =>
+    `<button class="chip" type="button" data-chip="${t.replace(/"/g, "&quot;")}">${t}</button>`).join("");
+}
+function toggleChat() {
+  const c = document.getElementById("chat");
+  c.hidden = !c.hidden;
+  if (!c.hidden && !document.getElementById("chat-log").children.length) {
+    chatAdd("bot", KTL().greet);
+    setChips(KTL().chips);
+    renderBadges();
+  }
+  if (!c.hidden) document.getElementById("chat-input").focus();
+}
+function bodyFromText(low) {
+  if (/venüs|venus/.test(low)) return "venus";
+  if (/titan/.test(low)) return "titan";
+  if (/mars/.test(low)) return "mars";
+  if (/\bay\b|moon/.test(low)) return "ay";
+  return null;
+}
+function machineAnswer(m, low) {
+  const K = KTL(), name = mf(m, "name");
+  if (/nerede|nere|where|yer|location/.test(low)) return `${name}: ${mf(m, "place")}.`;
+  if (/ne zaman|hangi yıl|yıl|when|year/.test(low)) return `${name}: ${m.year}${m.endYear && m.endYear !== m.year ? "–" + m.endYear : ""}.`;
+  if (/ne yap|ne iş|ne işe|what did|what does|what do/.test(low)) return mf(m, "what");
+  return `${name} (${m.year}). ${mf(m, "short")}`;
+}
+function answerSami(text) {
+  const K = KTL(), low = text.toLowerCase().trim(), en = state.lang === "en";
+  if (/merhaba|selam|\bhi\b|hello|hey/.test(low)) return K.greet;
+  for (const m of machines) {
+    const nm = mf(m, "name").toLowerCase();
+    if (low.includes(nm)) return machineAnswer(m, low);
+  }
+  if (/hangi makine|makineler|machines|which machine/.test(low)) {
+    const body = bodyFromText(low);
+    const names = machines.filter(m => !body || m.body === body).map(m => mf(m, "name")).join(", ");
+    return K.list(body ? K.bodies[body] : K.all, names);
+  }
+  for (const g of glossary) {
+    const [t, d] = g[en ? "en" : "tr"];
+    if (low.includes(t.toLowerCase())) return t + ": " + d;
+  }
+  if (/venüs|venus/.test(low)) return K.venusIntro;
+  if (/titan/.test(low)) return K.titanIntro;
+  if (/mars/.test(low)) return K.marsIntro;
+  if (/\bay\b|moon/.test(low)) return K.moonIntro;
+  if (/quiz|soru|oyun/.test(low)) return K.quizTip;
+  if (/yıldız|ödül|rozet|star|badge/.test(low)) return K.starsTip;
+  return K.none;
+}
+function sendChat(text) {
+  const t = (text || "").trim();
+  if (!t) return;
+  chatAdd("me", t);
+  chatAdd("bot", answerSami(t));
+}
+function kidsStory(m) {
+  const K = KTL();
+  const sents = (mf(m, "story") || "").split(/(?<=[.!?])\s+/);
+  const pages = [];
+  for (let i = 0; i < sents.length; i += 2) pages.push(sents.slice(i, i + 2).join(" "));
+  const p = Math.max(0, Math.min(storyPage, pages.length - 1));
+  storyPage = p;
+  return `<div class="story kids-story"><p class="note">${L("story_note")}</p>
+    <p class="page-text">${pages[p]}</p>
+    <div class="pager">
+      <button class="btn" data-spage="-1" ${p === 0 ? "disabled" : ""}>${K.prev}</button>
+      <span>${K.page(p + 1, pages.length)}</span>
+      <button class="btn" data-spage="1" ${p >= pages.length - 1 ? "disabled" : ""}>${K.next}</button>
+    </div></div>`;
+}
+
 /* ================= BAŞLAT ================= */
 state.lang = initLang();
 applyI18n();
@@ -2528,6 +2720,8 @@ renderInstruments();
 renderBars();
 renderStats();
 renderEras();
+updateStars();
+renderBadges();
 renderGameModes();
 renderQuiz();
 renderGlossary();
@@ -2542,5 +2736,29 @@ function loop(now) {
 }
 requestAnimationFrame(loop);
 </script>
+<button class="mascot" id="mascot" type="button" data-mascot aria-label="Sami">
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    <line x1="32" y1="6" x2="32" y2="14" stroke="#1a1200" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="32" cy="5" r="3.5" fill="#fff7d6"/>
+    <rect x="12" y="14" width="40" height="36" rx="12" fill="#ffffff"/>
+    <circle cx="24" cy="30" r="5" fill="#1a1200"/>
+    <circle cx="40" cy="30" r="5" fill="#1a1200"/>
+    <circle cx="25.5" cy="28.5" r="1.6" fill="#ffffff"/>
+    <circle cx="41.5" cy="28.5" r="1.6" fill="#ffffff"/>
+    <path d="M24 40 Q32 46 40 40" fill="none" stroke="#1a1200" stroke-width="3" stroke-linecap="round"/>
+    <rect x="18" y="52" width="28" height="8" rx="4" fill="#fff7d6"/>
+  </svg>
+</button>
+<section class="chat" id="chat" hidden aria-label="Sami">
+  <header class="chat-head"><span>Sami</span><button class="chat-x" type="button" data-chat-close aria-label="Kapat">×</button></header>
+  <div class="chat-log" id="chat-log"></div>
+  <div class="chat-chips" id="chat-chips"></div>
+  <div class="chat-badges" id="badges"></div>
+  <form class="chat-form" id="chat-form" autocomplete="off">
+    <input id="chat-input" aria-label="Soru">
+    <button class="btn btn-solid" type="submit">Gönder</button>
+  </form>
+</section>
+<div class="toast" id="toast" hidden></div>
 </body>
 </html>
