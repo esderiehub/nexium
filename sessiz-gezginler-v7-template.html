@@ -2646,7 +2646,6 @@ function toggleChat() {
   c.hidden = !c.hidden;
   if (!c.hidden && !document.getElementById("chat-log").children.length) {
     chatAdd("bot", KTL().greet);
-    setChips(KTL().chips);
     renderBadges();
   }
   if (!c.hidden) document.getElementById("chat-input").focus();
@@ -2752,7 +2751,6 @@ requestAnimationFrame(loop);
 <section class="chat" id="chat" hidden aria-label="Nex">
   <header class="chat-head"><span>Nex</span><button class="chat-x" type="button" data-chat-close aria-label="Kapat">×</button></header>
   <div class="chat-log" id="chat-log"></div>
-  <div class="chat-chips" id="chat-chips"></div>
   <div class="chat-badges" id="badges"></div>
   <form class="chat-form" id="chat-form" autocomplete="off">
     <input id="chat-input" aria-label="Soru">
