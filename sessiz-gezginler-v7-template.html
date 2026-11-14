@@ -332,8 +332,8 @@
   html[data-mode="kids"] [data-ptab="neden"],
   html[data-mode="kids"] [data-game="order"], html[data-mode="kids"] [data-game="fill"] { display: none !important; }
   /* Çocuk modu: Nex, yıldızlar, rozetler, hikâye sayfaları */
-  .mascot { position: fixed; right: 18px; bottom: 18px; z-index: 120; width: 72px; height: 72px; border-radius: 50%; border: 0; padding: 0; background: #f59e0b; box-shadow: 0 6px 18px rgba(0,0,0,.25); display: none; align-items: center; justify-content: center; cursor: pointer; }
-  .mascot svg { width: 50px; height: 50px; }
+  .mascot { position: fixed; right: 14px; bottom: 14px; z-index: 120; width: 84px; height: 84px; border: 0; padding: 0; background: transparent; filter: drop-shadow(0 6px 10px rgba(0,0,0,.25)); display: none; align-items: center; justify-content: center; cursor: pointer; }
+  .mascot svg { width: 74px; height: 74px; }
   html[data-mode="kids"] .mascot { display: flex; }
   .chat { position: fixed; right: 18px; bottom: 104px; z-index: 121; width: min(340px, calc(100vw - 36px)); height: 460px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
   .chat-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-weight: 600; }
@@ -2739,15 +2739,14 @@ requestAnimationFrame(loop);
 </script>
 <button class="mascot" id="mascot" type="button" data-mascot aria-label="Nex">
   <svg viewBox="0 0 64 64" aria-hidden="true">
-    <line x1="32" y1="6" x2="32" y2="14" stroke="#1a1200" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="32" cy="5" r="3.5" fill="#fff7d6"/>
-    <rect x="12" y="14" width="40" height="36" rx="12" fill="#ffffff"/>
-    <circle cx="24" cy="30" r="5" fill="#1a1200"/>
-    <circle cx="40" cy="30" r="5" fill="#1a1200"/>
-    <circle cx="25.5" cy="28.5" r="1.6" fill="#ffffff"/>
-    <circle cx="41.5" cy="28.5" r="1.6" fill="#ffffff"/>
-    <path d="M24 40 Q32 46 40 40" fill="none" stroke="#1a1200" stroke-width="3" stroke-linecap="round"/>
-    <rect x="18" y="52" width="28" height="8" rx="4" fill="#fff7d6"/>
+    <path d="M32 4 L39.1 22.3 L58.6 23.4 L43.4 35.7 L48.5 54.7 L32 44 L15.5 54.7 L20.6 35.7 L5.4 23.4 L24.9 22.3 Z" fill="#fbbf24" stroke="#b45309" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="26" cy="30" r="2.4" fill="#1a1200"/>
+    <circle cx="38" cy="30" r="2.4" fill="#1a1200"/>
+    <circle cx="26.8" cy="29.2" r="0.8" fill="#ffffff"/>
+    <circle cx="38.8" cy="29.2" r="0.8" fill="#ffffff"/>
+    <circle cx="22.5" cy="36" r="2.6" fill="#fb7185" opacity=".6"/>
+    <circle cx="41.5" cy="36" r="2.6" fill="#fb7185" opacity=".6"/>
+    <path d="M27.5 36 Q32 40.5 36.5 36" fill="none" stroke="#1a1200" stroke-width="2" stroke-linecap="round"/>
   </svg>
 </button>
 <section class="chat" id="chat" hidden aria-label="Nex">
