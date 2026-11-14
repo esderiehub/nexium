@@ -2836,8 +2836,7 @@ function answerNex(text) {
 const NEX_API = "https://bitter-surf-9863.ddemireser.workers.dev/";
 function siteContext() {
   const lines = machines.map(m => `${mf(m, "name")} | ${m.year}${m.endYear && m.endYear !== m.year ? "-" + m.endYear : ""} | ${mf(m, "place")} | ${mf(m, "short")}`);
-  return lines.join("
-").slice(0, 3800);
+  return lines.join("\n").slice(0, 3800);
 }
 async function sendChat(text) {
   const t = (text || "").trim();
