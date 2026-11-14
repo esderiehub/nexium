@@ -334,6 +334,8 @@
   /* Çocuk modu: Nex, yıldızlar, rozetler, hikâye sayfaları */
   .mascot { position: fixed; right: 14px; bottom: 14px; z-index: 120; width: 94px; height: 94px; border: 0; padding: 0; background: transparent; filter: drop-shadow(0 6px 10px rgba(0,0,0,.25)); display: none; align-items: center; justify-content: center; cursor: pointer; }
   .mascot svg { width: 84px; height: 84px; }
+  .mascot svg { transition: transform .25s ease; transform-origin: center; }
+  .mascot:hover svg, .mascot:focus-visible svg { transform: scale(1.18) rotate(-6deg); }
   html[data-mode="kids"] .mascot { display: flex; }
   .chat { position: fixed; right: 18px; bottom: 104px; z-index: 121; width: min(340px, calc(100vw - 36px)); height: 460px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
   .chat-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-weight: 600; }
