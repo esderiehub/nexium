@@ -454,8 +454,6 @@
     </div>
     <div class="gallery" id="nasa-grid"></div>
     <p class="credit" data-i18n="arc_credit">Görseller NASA Görsel Arşivi'nden (images-api.nasa.gov) canlı olarak yüklenir. Her görselin lisans ve kullanım koşulları NASA'nın ilgili kaydında yazar.</p>
-    <h3 class="sub-h" data-i18n="uploads_title">Yüklediğiniz görseller</h3>
-    <div class="gallery" id="gallery"></div>
   </section>
 
   <!-- QUIZ -->
@@ -867,7 +865,49 @@ const machines = [
     short:"Satürn'ün uydusu Titan'a inen tek iniş aracı. Yüzeyden kısa süre veri gönderdi.",
     what:"Avrupa Uzay Ajansı'nın Huygens iniş aracı, Cassini uzay aracıyla birlikte Satürn'e gitti. 14 Ocak 2005'te Titan'a indi ve atmosferden yüzeye inerken veri topladı.",
     why:"Titan'ın kalın atmosferinin yüzeye ulaşan etkilerini gösterdi. Yüzeyde buzdan çakıllar ve sıvı izleri olduğunu düşündüren görüntüler verdi.",
-    story:"Atmosferin içinden yavaşça süzüldüm; turuncu bir sis vardı. Yüzeye dokunduğumda, yuvarlak buz çakıllarının üzerindeydim. Sinyal azaldı, ama ilk renkli fotoğrafım hâlâ burada, bir ilk olarak." }
+    story:"Atmosferin içinden yavaşça süzüldüm; turuncu bir sis vardı. Yüzeye dokunduğumda, yuvarlak buz çakıllarının üzerindeydim. Sinyal azaldı, ama ilk renkli fotoğrafım hâlâ burada, bir ilk olarak." },
+  { id:"surveyor1", body:"ay", name:"Surveyor 1", kind:"Robotik iniş aracı", lon:-1.4, lat:-2.5, year:1966, endYear:1966, active:false, place:"Okyanus Procellarum", km:null,
+    status:"Son iletişim 1966", src:"https://en.wikipedia.org/wiki/Surveyor_1",
+    short:"ABD'nin Ay'a yumuşak iniş yapan ilk aracı.",
+    what:"Surveyor programının ilk aracı, 2 Haziran 1966'da Ay'a yumuşak iniş yaptı ve yüzeyden fotoğraflar gönderdi.",
+    why:"Yüzey toprağının dayanımını ölçtü. Bu veriler, Apollo'nun insanlı iniş planlarında kullanıldı.",
+    story:"Bir Amerikan aracının ilk kez Ay'ın tozuna dokunduğu gün, kameram yukarıya çevrildi. Sonra sessizlik başladı; ama o ilk fotoğraf hâlâ bir ilk olarak duruyor." },
+  { id:"surveyor7", body:"ay", name:"Surveyor 7", kind:"Robotik iniş aracı", lon:-11.5, lat:-40.9, year:1968, endYear:1968, active:false, place:"Tycho Krateri", km:null,
+    status:"Son iletişim 1968", src:"https://en.wikipedia.org/wiki/Surveyor_7",
+    short:"Surveyor programının son aracı. Tycho Krateri'nin kenarına indi.",
+    what:"Surveyor 7, Ocak 1968'de Tycho Krateri'nin kenarına yumuşak iniş yaptı. Yüzey toprağını kazıp inceledi ve yüzeyden fotoğraflar gönderdi.",
+    why:"Tycho'nun çevresindeki malzemenin bileşimini ölçtü. Bu bilgiler, Apollo'nun ileride yapacağı bilimsel çalışmalara temel oluşturdu.",
+    story:"Tycho'nun kenarında, Dünya'dan bakınca parlayan bir krater vardı. Ben oraya indim, kamerayı açtım ve bir kolumla toprağı kazdım. Bu, Surveyor'ın son işiydi." },
+  { id:"apollo12", body:"ay", name:"Apollo 12 İniş Kademesi (Intrepid)", kind:"İniş kademesi", lon:-23.4, lat:-3.0, year:1969, endYear:null, active:false, place:"Okyanus Procellarum", km:null,
+    status:"Yerinde duruyor", src:"https://en.wikipedia.org/wiki/Apollo_12",
+    short:"Alan Bean ve Charles Conrad'ı Ay'a indiren Intrepid'in iniş kademesi, işini bitirince yerinde kaldı.",
+    what:"Apollo 12 Ay modülü Intrepid, 19 Kasım 1969'da Ay'a indi. Yüzeyden kalkış aşaması ayrılınca iniş kademesi geride kaldı.",
+    why:"Surveyor 3'e yakın bir noktaya inmesi, Surveyor 3'ün kamerasının Dünya'ya getirilmesine olanak verdi.",
+    story:"Bean merdivenden inerken yanımda duruyordum. Yukarıda kalkış aşaması hazırlanırken, ben Surveyor 3'e bakmaya devam ettim." },
+  { id:"phoenix", body:"mars", name:"Phoenix İniş Aracı", kind:"İniş aracı", lon:-125.7, lat:68.2, year:2008, endYear:2008, active:false, place:"Mars'ın kuzey bölgesi (Vastitas Borealis)", km:null,
+    status:"Görev 2008'de sona erdi", src:"https://en.wikipedia.org/wiki/Phoenix_(spacecraft)",
+    short:"Mars'ın kuzey bölgesinde toprağı kazıp altındaki su buzunu doğrulayan iniş aracı.",
+    what:"NASA'nın Phoenix iniş aracı 2008'de Mars'ın kuzey bölgesine indi. Robot kolu ile buzlu toprağı kazdı ve suyun buz hâlini inceledi.",
+    why:"Toprağın altında su buzu bulunduğunu doğrudan ölçümle gösterdi. Bu, Mars'ta suyun varlığı konusunda önemli bir kanıt oldu.",
+    story:"Kollarımla toprağı kazdım. Altımda buz vardı; bunu fark ettiğimde güneş panellerim son kez ışığı topladı. Kışın gelmesiyle ben de sustum." },
+  { id:"insight", body:"mars", name:"InSight İniş Aracı", kind:"İniş aracı", lon:135.6, lat:4.5, year:2018, endYear:2022, active:false, place:"Elysium Planitia", km:null,
+    status:"Görev 2022'de sona erdi", src:"https://en.wikipedia.org/wiki/InSight",
+    short:"Mars'ın iç yapısını sismik dalgalarla inceleyen sabit iniş aracı.",
+    what:"NASA'nın InSight iniş aracı 2018'de Elysium Planitia'ya indi. Sismometresiyle Mars'taki depremleri ve titreşimleri ölçtü.",
+    why:"Mars'ın çekirdek ve manto yapısına dair ilk doğrudan veriler sağladı.",
+    story:"Yüzeyde hiç kıpırdamadım. Ama altımdaki Mars'ın titreşimlerini dinledim; her sarsıntı, içinde ne olduğunu anlatıyordu." },
+  { id:"zhurong", body:"mars", name:"Zhurong Gezgini", kind:"Gezgin (Çin)", lon:109.9, lat:25.1, year:2021, endYear:2022, active:false, place:"Utopia Planitia (güney bölüm)", km:null,
+    status:"Görev 2022'de sona erdi", src:"https://en.wikipedia.org/wiki/Zhurong_(rover)",
+    short:"Çin'in Tianwen-1 görevinin Mars gezgini. Utopia Planitia'da yaklaşık bir yıl çalıştı.",
+    what:"Tianwen-1 iniş aracıyla Mayıs 2021'de Mars'a inen gezgin, Utopia Planitia'da yaklaşık bir yıl çalıştı.",
+    why:"Bölgenin jeolojik yapısını ve kaya-toprak özelliklerini inceledi. Kuzey ovalarındaki geçmiş su izlerini araştırdı.",
+    story:"Kızıl ovanın ortasında, yanımda iniş aracım duruyordu. Her gün yeni bir tepe ve yeni bir kaya seçtim. Bir gün sinyaller kesildi, ama izlerim hâlâ burada." },
+  { id:"pragyan", body:"ay", name:"Pragyan Gezgini", kind:"Gezgin (Hindistan)", lon:32.3, lat:-69.4, year:2023, endYear:2023, active:false, place:"Shiv Shakti noktası yakını (güney kutup bölgesi)", km:null,
+    status:"Görev 2023'te sona erdi", src:"https://en.wikipedia.org/wiki/Chandrayaan-3",
+    short:"Hindistan'ın Chandrayaan-3 misyonunun gezgini. Ay'ın güney kutbunun yakınında çalıştı.",
+    what:"Vikram iniş aracından inen Pragyan, Ağustos 2023'te Ay'ın güney kutbu yakınına indi ve yaklaşık bir Ay günü boyunca çalıştı.",
+    why:"Güney kutbundaki toprakta kükürt gibi elementleri ölçtü. Bu bölgeden ilk kez doğrudan veri alındı.",
+    story:"Rampadan yavaşça indim. Kutbun soğuk gölgesinde yeni bir yol açtım, bir gün güneşin ışığıyla çalıştım, sonra gece geldi." }
 ];
 
 const byId = Object.fromEntries(machines.map(m => [m.id, m]));
@@ -973,7 +1013,42 @@ const MEN = {
     short:"The only lander to touch down on Titan, Saturn's moon. It sent data from the surface for a short time.",
     what:"The European Space Agency's Huygens lander traveled to Saturn with the Cassini spacecraft. It landed on Titan on January 14, 2005 and collected data on its way down through the atmosphere.",
     why:"It showed how the thick atmosphere of Titan affects the surface. Its images suggested pebbles of water ice and traces of liquids on the ground.",
-    story:"I drifted slowly through the atmosphere, under an orange haze. When I touched the surface, I was resting among round pebbles of ice. My signal faded, but my first color photo is still here, as a first." } };
+    story:"I drifted slowly through the atmosphere, under an orange haze. When I touched the surface, I was resting among round pebbles of ice. My signal faded, but my first color photo is still here, as a first." },
+  surveyor1: { name:"Surveyor 1", kind:"Robotic lander", place:"Ocean of Storms", status:"Last contact 1966",
+    short:"The first American spacecraft to land softly on the Moon.",
+    what:"The first vehicle of the Surveyor program made a soft landing on the Moon on June 2, 1966 and sent photos from the surface.",
+    why:"It measured the strength of the surface soil. The data were used in planning the crewed Apollo landings.",
+    story:"The day an American vehicle first touched the Moon's dust, my camera turned upward. Then silence began; but that first photo still stands as a first." },
+  surveyor7: { name:"Surveyor 7", kind:"Robotic lander", place:"Tycho Crater", status:"Last contact 1968",
+    short:"The last vehicle of the Surveyor program. It landed at the edge of Tycho Crater.",
+    what:"Surveyor 7 made a soft landing at the edge of Tycho Crater in January 1968. It dug into the soil and sent photos from the surface.",
+    why:"It measured the composition of material around Tycho. This information supported later Apollo science work.",
+    story:"At the edge of Tycho there was a crater that shone when seen from Earth. I landed there, opened my camera and dug the soil with one arm. That was Surveyor's last task." },
+  apollo12: { name:"Apollo 12 Descent Stage (Intrepid)", kind:"Descent stage", place:"Ocean of Storms", status:"Still in place",
+    short:"The descent stage of Intrepid, which landed Alan Bean and Charles Conrad on the Moon, stayed behind when its job was done.",
+    what:"The Apollo 12 lunar module Intrepid landed on the Moon on November 19, 1969. When the ascent stage lifted off, the descent stage was left behind.",
+    why:"Its landing near Surveyor 3 allowed the return of Surveyor 3's camera to Earth.",
+    story:"As Bean climbed down the ladder, I stood beside him. Above us the ascent stage was being prepared; I kept watching Surveyor 3." },
+  phoenix: { name:"Phoenix Lander", kind:"Lander", place:"Northern region of Mars (Vastitas Borealis)", status:"Mission ended in 2008",
+    short:"A lander that dug the soil in Mars' northern region and confirmed water ice beneath it.",
+    what:"NASA's Phoenix lander touched down in Mars' northern region in 2008. Using its robotic arm, it dug into icy soil and studied the water ice.",
+    why:"It directly measured water ice in the soil. This was a key piece of evidence about water on Mars.",
+    story:"I dug into the soil with my arms. There was ice underneath; when I noticed it, my solar panels collected light for the last time. Winter came, and I fell silent." },
+  insight: { name:"InSight Lander", kind:"Lander", place:"Elysium Planitia", status:"Mission ended in 2022",
+    short:"A stationary lander that studied Mars' interior using seismic waves.",
+    what:"NASA's InSight lander touched down in Elysium Planitia in 2018. Its seismometer measured marsquakes and vibrations on Mars.",
+    why:"It provided the first direct data on the structure of Mars' core and mantle.",
+    story:"I never moved on the surface. But I listened to the vibrations of Mars beneath me; every tremor told me what was inside." },
+  zhurong: { name:"Zhurong Rover", kind:"Rover (China)", place:"Southern part of Utopia Planitia", status:"Mission ended in 2022",
+    short:"The Mars rover of China's Tianwen-1 mission. It worked in Utopia Planitia for about a year.",
+    what:"The rover landed on Mars with the Tianwen-1 lander in May 2021 and worked in Utopia Planitia for about a year.",
+    why:"It studied the geology and the rock and soil of the region. It looked for traces of past water in the northern plains.",
+    story:"In the middle of the red plain, my lander stood beside me. Every day I chose a new hill and a new rock. One day the signals were cut, but my tracks are still here." },
+  pragyan: { name:"Pragyan Rover", kind:"Rover (India)", place:"Near Shiv Shakti point (south polar region)", status:"Mission ended in 2023",
+    short:"The rover of India's Chandrayaan-3 mission. It worked near the Moon's south pole.",
+    what:"Pragyan rolled off the Vikram lander and landed near the Moon's south pole in August 2023. It worked for about one lunar day.",
+    why:"It measured elements such as sulfur in the soil near the south pole. This was the first direct data from that region.",
+    story:"I rolled down the ramp slowly. In the cold shadow of the pole I opened a new path; on another day I worked in the sunlight, then night came." } };
 
 /* Makine metni: İngilizce seçiliyse MEN, yoksa TR alan */
 function mf(m, f) {
@@ -1003,7 +1078,14 @@ const FACT = {
     venera9: "Venera 9, Venüs yüzeyinden ilk görüntüleri gönderdi ve yaklaşık 53 dakika veri aktardı (yaklaşık değer).",
     venera13: "Venera 13, Venüs'te yaklaşık iki saat (127 dakika) çalıştı ve bir toprak örneğini analiz etti.",
     venera14: "Venera 14, Venüs'te yaklaşık bir saat çalıştı ve yüzeyin görüntülerini gönderdi.",
-    huygens: "Huygens, Dış Güneş Sistemi'nde bir cisme inen ilk araçtı; Titan'a inen tek araçtır."
+    huygens: "Huygens, Dış Güneş Sistemi'nde bir cisme inen ilk araçtı; Titan'a inen tek araçtır.",
+    surveyor1: "Surveyor 1 ölçtüğü toprak dayanımıyla Apollo'nun insanlı iniş planlarına veri sağladı.",
+    surveyor7: "Surveyor 7, Surveyor programının son aracıydı ve Tycho Krateri'ne indi.",
+    apollo12: "Intrepid'in iniş kademesi, Surveyor 3'e yakın bir noktada yerinde kaldı.",
+    phoenix: "Phoenix, Mars'ta toprağın altındaki su buzunu doğrudan ölçtü.",
+    insight: "InSight, Mars'ın iç yapısını sismik dalgalarla inceledi ve 2022'ye kadar veri gönderdi.",
+    zhurong: "Zhurong, Mayıs 2021'de Utopia Planitia'ya indi ve yaklaşık bir yıl çalıştı.",
+    pragyan: "Pragyan, Ay'ın güney kutbu yakınında çalıştı; bu bölge ilk kez doğrudan ölçüldü."
   },
   en: {
     apollo11: "Light sent from the Moon still returns from the corner reflector left behind; this is how the Earth–Moon distance is measured.",
@@ -1025,7 +1107,14 @@ const FACT = {
     venera9: "Venera 9 sent the first images from the surface of Venus and operated for about 53 minutes (approximate).",
     venera13: "Venera 13 worked on Venus for about two hours (127 minutes) and analyzed a soil sample.",
     venera14: "Venera 14 worked on the Venus surface for about an hour and sent images of it.",
-    huygens: "Huygens was the first spacecraft to land on a body in the outer Solar System; it is the only lander on Titan."
+    huygens: "Huygens was the first spacecraft to land on a body in the outer Solar System; it is the only lander on Titan.",
+    surveyor1: "Surveyor 1's measurements of the soil's strength helped plan the crewed Apollo landings.",
+    surveyor7: "Surveyor 7 was the last vehicle of the Surveyor program and landed in Tycho Crater.",
+    apollo12: "The descent stage of Intrepid stayed in place near Surveyor 3.",
+    phoenix: "Phoenix directly measured water ice beneath the soil of Mars.",
+    insight: "InSight studied Mars' interior with seismic waves and sent data until 2022.",
+    zhurong: "Zhurong landed in Utopia Planitia in May 2021 and worked for about a year.",
+    pragyan: "Pragyan worked near the Moon's south pole, a region measured directly for the first time."
   }
 };
 function factOf(m) { return (FACT[state.lang] || FACT.tr)[m.id] || ""; }
@@ -1151,6 +1240,14 @@ const SOURCES = [
   { href:"https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m", tr:"USGS: Mars Viking renkli global mozaik, 232 m (referans)", en:"USGS: Mars Viking colorized global mosaic, 232 m (reference)" },
   { href:"https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m", tr:"USGS: Mars MOLA yükseklik modeli, 463 m (yükseklik verisi, renkli doku değil)", en:"USGS: Mars MOLA elevation model, 463 m (elevation data, not a color texture)" },
   { href:"https://images.nasa.gov/", tr:"NASA Görsel Arşivi (images-api.nasa.gov): sitedeki canlı arama ve makine fotoğrafları", en:"NASA Image Archive (images-api.nasa.gov): live search and machine photos on this site" },
+  { href:"https://commons.wikimedia.org/wiki/File:Foto_de_Venera_9.png", tr:"Wikimedia Commons: Venera 9 yüzey fotoğrafı (kamu malı)", en:"Wikimedia Commons: Venera 9 surface photo (public domain)" },
+  { href:"https://commons.wikimedia.org/wiki/File:Surveyor_1_-_America%E2%80%99s_first_soft_lunar_landing_(LROC13_-_surv_thumb).png", tr:"Wikimedia Commons: Surveyor 1, LRO görüntüsü (kamu malı)", en:"Wikimedia Commons: Surveyor 1, LRO image (public domain)" },
+  { href:"https://commons.wikimedia.org/wiki/File:Surveyor_7_-_America%27s_Last_Lunar_Unmanned_Lander_(LROC534).tiff", tr:"Wikimedia Commons: Surveyor 7, LRO görüntüsü (kamu malı)", en:"Wikimedia Commons: Surveyor 7, LRO image (public domain)" },
+  { href:"https://images.nasa.gov/details/as12-46-6726", tr:"NASA Görsel Arşivi: Apollo 12, AS12-46-6726 (kamu malı)", en:"NASA Image Archive: Apollo 12, AS12-46-6726 (public domain)" },
+  { href:"https://images.nasa.gov/details/KSC-07PD-1085", tr:"NASA Görsel Arşivi: Phoenix, KSC-07PD-1085 (kamu malı)", en:"NASA Image Archive: Phoenix, KSC-07PD-1085 (public domain)" },
+  { href:"https://images.nasa.gov/details/PIA21847", tr:"NASA/JPL PIA21847: InSight iniş aracı güvertesi (kamu malı)", en:"NASA/JPL PIA21847: InSight lander deck (public domain)" },
+  { href:"https://commons.wikimedia.org/wiki/File:Tianwen-1_Lander_and_Zhurong_Rover_in_Southern_Utopia_Planitia.jpg", tr:"Wikimedia Commons: Tianwen-1 iniş aracı ve Zhurong, HiRISE (kamu malı)", en:"Wikimedia Commons: Tianwen-1 lander and Zhurong, HiRISE (public domain)" },
+  { href:"https://commons.wikimedia.org/wiki/File:Chandrayaan-3_Pragyan_rover.png", tr:"Wikimedia Commons: Chandrayaan-3 Pragyan gezgini, ISRO (GODL-India lisansı)", en:"Wikimedia Commons: Chandrayaan-3 Pragyan rover, ISRO (GODL-India licence)" },
   { href:"https://en.wikipedia.org/wiki/Venera_9", tr:"Wikipedia: Venera 9", en:"Wikipedia: Venera 9" },
   { href:"https://en.wikipedia.org/wiki/Venera_13", tr:"Wikipedia: Venera 13", en:"Wikipedia: Venera 13" },
   { href:"https://en.wikipedia.org/wiki/Venera_14", tr:"Wikipedia: Venera 14", en:"Wikipedia: Venera 14" },
@@ -1218,7 +1315,15 @@ const PHOTO_LOCAL = {
   lunokhod1: { src: "img/lunokhod1.png", title: "Lunokhod 1 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
   lunokhod2: { src: "img/lunokhod2.jpg", title: "Lunokhod 2 · NASA/LRO görüntüsü (kamu malı)" },
   yutu2: { src: "img/yutu2.jpg", title: "Yutu-2 · CNSA/CLEP (CC BY 4.0)" },
-  venera13: { src: "img/venera13.jpg", title: "Venera 13 yüzey panoraması · SSCB/NASA (kamu malı)" }
+  venera13: { src: "img/venera13.jpg", title: "Venera 13 yüzey panoraması · SSCB/NASA (kamu malı)" },
+  venera9: { src: "img/venera9.png", title: "Venera 9'un Venüs yüzeyinden çektiği fotoğraf · SSCB (kamu malı)" },
+  surveyor1: { src: "img/surveyor1.png", title: "Surveyor 1 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
+  surveyor7: { src: "img/surveyor7.jpg", title: "Surveyor 7 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
+  apollo12: { src: "img/apollo12.jpg", title: "Apollo 12 Intrepid · NASA (kamu malı)" },
+  phoenix: { src: "img/phoenix.jpg", title: "Phoenix · NASA/KSC, uçuş öncesi hazırlık (kamu malı)" },
+  insight: { src: "img/insight.jpg", title: "InSight iniş aracının güverte görüntüsü · NASA/JPL (kamu malı)" },
+  zhurong: { src: "img/zhurong.jpg", title: "Tianwen-1 iniş aracı ve Zhurong · NASA/JPL/UArizona, HiRISE (kamu malı)" },
+  pragyan: { src: "img/pragyan.png", title: "Pragyan gezgini · ISRO (GODL-India)" }
 };
 
 /* ================= YARDIMCILAR ================= */
@@ -1495,8 +1600,7 @@ function setLang(l) {
   renderInstruments();
   renderBars();
   renderStats();
-  renderGallery();
-  renderQuiz();
+    renderQuiz();
   renderGlossary(document.getElementById("gq").value);
   renderSources();
   renderNasa();
@@ -1717,8 +1821,8 @@ function renderBars() {
 }
 
 /* ================= GALERİ & LIGHTBOX ================= */
-function renderGallery() {
-  document.getElementById("gallery").innerHTML = SHOTS.map((s, i) => `
+function galleryHtml() {
+  return SHOTS.map((s, i) => `
     <figure class="shot reveal" data-shot="${i}">
       <div class="frame"><img src="${IMG[s.src]}" alt="${loc({ tr: s.tr, en: s.en })}" loading="lazy"></div>
       <figcaption><b>${loc({ tr: s.tr, en: s.en })}</b><span>${loc(s.tag)}</span></figcaption>
@@ -1990,10 +2094,10 @@ function renderNasa() {
     meta.textContent = "";
   } else {
     meta.textContent = L("nasa_sum")(N.total.toLocaleString(state.lang === "en" ? "en-US" : "tr-TR"), N.page);
-    grid.innerHTML = N.items.length ? N.items.map((it, i) => {
+    grid.innerHTML = (N.preset === "satellite" ? "" : galleryHtml()) + (N.items.length ? N.items.map((it, i) => {
       const d = it.data[0];
       return `<figure class="shot" data-nasa="${i}"><div class="frame"><img loading="lazy" src="${esc(it.links[0].href)}" alt="${esc(d.title)}"></div><figcaption><b>${esc(d.title)}</b><span>${esc((d.date_created || "").slice(0, 4))}</span></figcaption></figure>`;
-    }).join("") : `<p class="empty-msg">${L("nasa_none")}</p>`;
+    }).join("") : `<p class="empty-msg">${L("nasa_none")}</p>`);
   }
   document.querySelector('[data-page="prev"]').disabled = N.busy || N.page <= 1;
   document.querySelector('[data-page="next"]').disabled = N.busy || N.page * PAGE_SIZE >= N.total;
@@ -2155,7 +2259,6 @@ renderTimeline();
 renderInstruments();
 renderBars();
 renderStats();
-renderGallery();
 renderGameModes();
 renderQuiz();
 renderGlossary();
