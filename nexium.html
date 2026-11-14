@@ -345,7 +345,7 @@
   .chat-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); font-weight: 600; }
   .chat-x { border: 0; background: transparent; font-size: 22px; color: var(--muted); padding: 0 4px; }
   .chat-log { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-  .msg { max-width: 86%; padding: 9px 12px; border-radius: 14px; font-size: 15px; line-height: 1.5; }
+  .msg { white-space: pre-line; max-width: 86%; padding: 9px 12px; border-radius: 14px; font-size: 15px; line-height: 1.5; }
   .msg.bot { background: var(--surface-2); align-self: flex-start; color: var(--text); }
   .msg.me { background: #f59e0b; color: #1a1200; align-self: flex-end; }
   .chat-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px; }
@@ -2595,7 +2595,7 @@ const KT = {
     quizTip: "Solve the questions in the Quiz tab to earn stars!",
     starsTip: "Correct answers earn stars. Your badges appear in this window.",
     list: (b, names) => `Machines on ${b}: ${names}.`,
-    all: "All planets",
+    all: "all planets",
     bodies: { ay: "the Moon", mars: "Mars", venus: "Venus", titan: "Titan" },
     chips: ["Where is Curiosity?", "Which machines are on the Moon?", "What did Yutu-2 do?", "Which machines are on Venus?"],
     badges: "My badges", noBadges: "No badges yet.", earned: "New badge:",
@@ -2673,14 +2673,33 @@ function machineAnswer(m, low) {
   if (/ne yap|ne iş|ne işe|what did|what does|what do/.test(low)) return mf(m, "what");
   return `${name} (${m.year}). ${mf(m, "short")}`;
 }
+function editDist(a, b) {
+  const m = a.length, n = b.length;
+  const d = [];
+  for (let i = 0; i <= m; i++) { d.push([i]); }
+  for (let j = 1; j <= n; j++) d[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[m][n];
+}
+const GENERIC_WORDS = ["apollo", "lander", "rover", "iniş", "aracı", "gezgin", "gezgini", "helikopter", "venera", "viking", "surveyor", "lunokhod", "phoenix", "insight", "zhurong", "pragyan"];
+function fuzzyMachine(low, name) {
+  const words = low.split(/[^a-zçğıöşü0-9]+/).filter(w => w.length >= 5);
+  const parts = name.split(/[\s()-]+/).filter(w => w.length >= 5 && !GENERIC_WORDS.includes(w));
+  return words.some(w => parts.some(p => w === p || editDist(w, p) <= 1));
+}
 function answerNex(text) {
   const K = KTL(), low = text.toLowerCase().trim(), en = state.lang === "en";
   if (/merhaba|selam|\bhi\b|hello|hey/.test(low)) return K.greet;
   for (const m of machines) {
     const nm = mf(m, "name").toLowerCase();
-    if (low.includes(nm)) return machineAnswer(m, low);
+    if (low.includes(nm) || fuzzyMachine(low, nm)) return machineAnswer(m, low);
   }
-  if (/hangi makine|makineler|machines|which machine/.test(low)) {
+  if (/info|bilgi|yardım|help|ne var|neler|tanıt|about|hakkında|what is this|what's here|neyi/.test(low)) {
+    return KG[en ? "en" : "tr"].tour.join("\n");
+  }
+  if (/hangi makine|makineleri|makineler|which machine|list/.test(low)) {
     const body = bodyFromText(low);
     const names = machines.filter(m => !body || m.body === body).map(m => mf(m, "name")).join(", ");
     return K.list(body ? K.bodies[body] : K.all, names);
@@ -2689,6 +2708,9 @@ function answerNex(text) {
     const [t, d] = g[en ? "en" : "tr"];
     if (low.includes(t.toLowerCase())) return t + ": " + d;
   }
+  if (/kırmızı|red/.test(low) && /neden|why|mars/.test(low)) return en ? "Mars looks red because its dust contains iron oxide (hematite)." : "Mars'ın kırmızı rengi, tozunda bulunan demir oksit (hematit) mineralinden gelir.";
+  if (/kaç makine|how many/.test(low)) return en ? `There are ${machines.length} machines on this site.` : `Sitede ${machines.length} makine var.`;
+  if (/nasıl oyn|nasıl kullan|how to|how do/.test(low)) return en ? "Pick a point on the globe or a card in Machines. In the Quiz, solve questions to earn stars." : "Gezegen sekmesinde bir noktaya ya da Makineler'de bir karta tıklayın. Quiz'de soruları çözerek yıldız kazanın.";
   if (/venüs|venus/.test(low)) return K.venusIntro;
   if (/titan/.test(low)) return K.titanIntro;
   if (/mars/.test(low)) return K.marsIntro;
