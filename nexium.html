@@ -331,7 +331,7 @@
   html[data-mode="kids"] .nav [data-tab="goruntuler"], html[data-mode="kids"] .nav [data-tab="kaynakca"],
   html[data-mode="kids"] [data-ptab="neden"],
   html[data-mode="kids"] [data-game="order"], html[data-mode="kids"] [data-game="fill"] { display: none !important; }
-  /* Çocuk modu: Sami, yıldızlar, rozetler, hikâye sayfaları */
+  /* Çocuk modu: Nex, yıldızlar, rozetler, hikâye sayfaları */
   .mascot { position: fixed; right: 18px; bottom: 18px; z-index: 120; width: 72px; height: 72px; border-radius: 50%; border: 0; padding: 0; background: #f59e0b; box-shadow: 0 6px 18px rgba(0,0,0,.25); display: none; align-items: center; justify-content: center; cursor: pointer; }
   .mascot svg { width: 50px; height: 50px; }
   html[data-mode="kids"] .mascot { display: flex; }
@@ -2562,7 +2562,7 @@ document.getElementById("mode-gate").hidden = savedMode === "kids" || savedMode 
 /* ================= ÇOCUK MODU: SAMİ, YILDIZ, ROZET, HİKÂYE ================= */
 const KT = {
   tr: {
-    greet: "Merhaba! Ben Sami. Makineler, gezegenler ve terimler hakkında soru sorabilirsin. Sadece bu sitedeki bilgilerle cevap veririm.",
+    greet: "Merhaba! Ben Nex. Makineler, gezegenler ve terimler hakkında soru sorabilirsin. Sadece bu sitedeki bilgilerle cevap veririm.",
     none: "Bunu tam anlayamadım. Bir makine adı, gezegen ya da terim yazmayı dene!",
     moonIntro: "Ay, Dünya'nın tek doğal uydusu. Üzerinde birçok makine çalıştı.",
     marsIntro: "Mars, kızıl rengiyle bilinen komşu gezegenimiz. Birçok gezgin orada çalıştı.",
@@ -2578,7 +2578,7 @@ const KT = {
     page: (i, n) => `Sayfa ${i} / ${n}`, prev: "← Önceki", next: "Sonraki →"
   },
   en: {
-    greet: "Hello! I'm Sami. Ask me about machines, planets and terms. I only answer with information from this site.",
+    greet: "Hello! I'm Nex. Ask me about machines, planets and terms. I only answer with information from this site.",
     none: "I couldn't quite understand that. Try a machine name, a planet or a term!",
     moonIntro: "The Moon is Earth's only natural satellite. Many machines have worked on it.",
     marsIntro: "Mars is our red neighbor planet. Many rovers have worked there.",
@@ -2666,7 +2666,7 @@ function machineAnswer(m, low) {
   if (/ne yap|ne iş|ne işe|what did|what does|what do/.test(low)) return mf(m, "what");
   return `${name} (${m.year}). ${mf(m, "short")}`;
 }
-function answerSami(text) {
+function answerNex(text) {
   const K = KTL(), low = text.toLowerCase().trim(), en = state.lang === "en";
   if (/merhaba|selam|\bhi\b|hello|hey/.test(low)) return K.greet;
   for (const m of machines) {
@@ -2694,7 +2694,7 @@ function sendChat(text) {
   const t = (text || "").trim();
   if (!t) return;
   chatAdd("me", t);
-  chatAdd("bot", answerSami(t));
+  chatAdd("bot", answerNex(t));
 }
 function kidsStory(m) {
   const K = KTL();
@@ -2737,7 +2737,7 @@ function loop(now) {
 }
 requestAnimationFrame(loop);
 </script>
-<button class="mascot" id="mascot" type="button" data-mascot aria-label="Sami">
+<button class="mascot" id="mascot" type="button" data-mascot aria-label="Nex">
   <svg viewBox="0 0 64 64" aria-hidden="true">
     <line x1="32" y1="6" x2="32" y2="14" stroke="#1a1200" stroke-width="3" stroke-linecap="round"/>
     <circle cx="32" cy="5" r="3.5" fill="#fff7d6"/>
@@ -2750,8 +2750,8 @@ requestAnimationFrame(loop);
     <rect x="18" y="52" width="28" height="8" rx="4" fill="#fff7d6"/>
   </svg>
 </button>
-<section class="chat" id="chat" hidden aria-label="Sami">
-  <header class="chat-head"><span>Sami</span><button class="chat-x" type="button" data-chat-close aria-label="Kapat">×</button></header>
+<section class="chat" id="chat" hidden aria-label="Nex">
+  <header class="chat-head"><span>Nex</span><button class="chat-x" type="button" data-chat-close aria-label="Kapat">×</button></header>
   <div class="chat-log" id="chat-log"></div>
   <div class="chat-chips" id="chat-chips"></div>
   <div class="chat-badges" id="badges"></div>
