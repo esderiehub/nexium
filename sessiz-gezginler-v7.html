@@ -682,6 +682,7 @@ const T = {
     gl_search_ph: "Terim ara",
     gl_none: "Bu arama için terim bulunamadı.",
     src_title: "Kaynakça",
+    chat_ph: "Bir soru yaz...", chat_send: "Gönder",
     mode_title: "Nasıl devam etmek istersiniz?", mode_text: "Bu seçimi istediğiniz zaman üst menüden değiştirebilirsiniz.",
     mode_kids: "İlkokul için basit anlatım", mode_kids_desc: "Daha büyük yazılar, daha az sekme ve kısa metinler.",
     mode_std: "Standart", mode_std_desc: "Tüm bölümler ve ayrıntılı metinler.",
@@ -776,6 +777,7 @@ const T = {
     gl_search_ph: "Search terms",
     gl_none: "No terms match this search.",
     src_title: "Sources",
+    chat_ph: "Type a question...", chat_send: "Send",
     mode_title: "How would you like to continue?", mode_text: "You can change this choice at any time from the top menu.",
     mode_kids: "Simple explanations for primary school", mode_kids_desc: "Larger text, fewer tabs and shorter texts.",
     mode_std: "Standard", mode_std_desc: "All sections and detailed texts.",
@@ -1734,7 +1736,7 @@ function applyI18n() {
   document.getElementById("nasa-q").value = N.q;
 }
 function setLang(l) {
-  setTimeout(() => applyTheme(currentTheme()), 0);
+  setTimeout(() => { applyTheme(currentTheme()); applyMode(currentMode()); }, 0);
   if (l !== "tr" && l !== "en") return;
   state.lang = l;
   try { localStorage.setItem("sg-lang", l); } catch (e) {}
@@ -2754,8 +2756,8 @@ requestAnimationFrame(loop);
   <div class="chat-log" id="chat-log"></div>
   <div class="chat-badges" id="badges"></div>
   <form class="chat-form" id="chat-form" autocomplete="off">
-    <input id="chat-input" aria-label="Soru">
-    <button class="btn btn-solid" type="submit">Gönder</button>
+    <input id="chat-input" data-i18n-ph="chat_ph" placeholder="Bir soru yaz..." aria-label="Soru">
+    <button class="btn btn-solid" type="submit" data-i18n="chat_send">Gönder</button>
   </form>
 </section>
 <div class="toast" id="toast" hidden></div>
