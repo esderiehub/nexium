@@ -575,7 +575,6 @@
     <ol class="src-list" id="sources-list"></ol>
     <div class="src-notes">
       <p data-i18n="foot_verify">Doğrulama. Tarih, konum, durum ve mesafe bilgileri yaklaşıktır.</p>
-      <p data-i18n="foot_story">"Hikaye" bölümleri kurgusal anlatımdır.</p>
     </div>
   </section>
 
@@ -584,7 +583,6 @@
 
 <footer class="wrap" hidden>
   <p data-i18n="foot_verify">Doğrulama. Tarih, konum, durum ve mesafe bilgileri yaklaşıktır. Yayımlamadan önce ilgili NASA, JPL, ESA ve Roscosmos sayfalarından kontrol edilmelidir.</p>
-  <p data-i18n="foot_story">"Hikaye" bölümleri kurgusal anlatımdır. Olaylar gerçeğe dayanır; birinci tekil şahıs sesi bir yorumdur.</p>
 </footer>
 
 <div class="lightbox" id="lightbox" hidden>
@@ -1836,7 +1834,7 @@ function renderPanel() {
   } else if (state.panel === "neden") {
     content = `<p>${mf(m, "why")}</p>`;
   } else {
-    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="note">${L("story_note")}</p><p>${mf(m, "story")}</p></div>`;
+    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p>${mf(m, "story")}</p></div>`;
   }
   body.className = "panel-body";
   body.innerHTML = content;
@@ -2703,7 +2701,7 @@ function kidsStory(m) {
   for (let i = 0; i < sents.length; i += 2) pages.push(sents.slice(i, i + 2).join(" "));
   const p = Math.max(0, Math.min(storyPage, pages.length - 1));
   storyPage = p;
-  return `<div class="story kids-story"><p class="note">${L("story_note")}</p>
+  return `<div class="story kids-story">
     <p class="page-text">${pages[p]}</p>
     <div class="pager">
       <button class="btn" data-spage="-1" ${p === 0 ? "disabled" : ""}>${K.prev}</button>
