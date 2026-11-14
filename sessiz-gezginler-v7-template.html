@@ -36,7 +36,7 @@
   .js .reveal.in { opacity: 1; transform: none; }
 
   /* Üst çubuk */
-  .topbar { position: sticky; top: 0; z-index: 40; background: rgba(11,12,14,0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .topbar { position: sticky; top: 0; z-index: 40; background: rgba(11,12,14,0.94); border-bottom: 1px solid var(--line); }
   .topbar-inner { display: flex; align-items: stretch; gap: 24px; }
   .brand { display: flex; align-items: center; font-family: var(--serif); font-size: 1.12rem; white-space: nowrap; color: var(--text); padding: 14px 0; }
   .brand:hover { text-decoration: none; }
@@ -82,7 +82,7 @@
   .caption { margin: 14px 0 0; font-size: 12.5px; color: var(--dim); max-width: 62ch; }
 
   .panel { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); display: flex; flex-direction: column; min-height: 440px; }
-  .panel-img { aspect-ratio: 16 / 7; background-size: cover; background-position: center; background-color: #0e0f12; border-bottom: 1px solid var(--line); }
+  .panel-img { aspect-ratio: 16 / 7; background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #0e0f12; border-bottom: 1px solid var(--line); }
   .photo-credit { font-size: 12.5px; color: var(--dim); margin: 0; padding: 8px 26px 0; }
   .panel-head { padding: 22px 26px 0; }
   .panel-head h3 { font-size: 1.7rem; margin-bottom: 4px; }
@@ -127,7 +127,7 @@
   @media (min-width: 1000px) { .cards { grid-template-columns: 1fr 1fr 1fr; } }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: border-color .2s; }
   .card:hover { border-color: #353b46; }
-  .card-img { aspect-ratio: 16 / 9; background-size: cover; background-position: center; background-color: #0e0f12; position: relative; }
+  .card-img { aspect-ratio: 16 / 9; background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #0e0f12; position: relative; }
   .card-img.photo-ph { display: flex; align-items: center; justify-content: center; }
   .card-img .tag { position: absolute; left: 12px; top: 12px; }
   .ph-text { color: var(--dim); font-size: 13px; padding: 12px; text-align: center; }
@@ -274,6 +274,12 @@
   .galaxy-fig img { width: 100%; display: block; border-radius: 8px; }
   .galaxy-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
   .galaxy-text { max-width: 760px; }
+  .eras { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 36px; }
+  .era { border-top: 1px solid var(--line); padding-top: 14px; }
+  .era-y { font-size: 12px; letter-spacing: .08em; color: var(--muted); margin: 0 0 6px; }
+  .era h3 { font-size: 18px; margin: 0 0 8px; }
+  .era p { font-size: 14.5px; color: var(--text-2); margin: 0; }
+  .ord-list { margin: 16px 0; padding-left: 20px; color: var(--text-2); }
 </style>
 </head>
 <body>
@@ -304,9 +310,7 @@
   <!-- GEZEGEN -->
   <div class="head" id="head-gezegen">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="globe_eyebrow">Ay ve Mars</p>
       <h1 data-i18n="globe_title">Gezegeni döndür, makineyi bul</h1>
-      <p class="lede" data-i18n="globe_lede">On altı makine, 1967'den bugüne. Küreyi sürükleyin, bir noktaya tıklayın; makinenin hikayesi yanda açılsın.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-gezegen">
@@ -355,9 +359,7 @@
   <!-- MAKİNELER -->
   <div class="head" id="head-makineler" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="cat_eyebrow">Katalog</p>
       <h1 data-i18n="cat_title">Ay ve Mars'taki makineler</h1>
-      <p class="lede" data-i18n="cat_lede">İniş aracı, gezgin ve helikopter. Her kart makinenin fotoğrafını, gezegendeki yerini ve bugünkü durumunu gösterir.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-makineler" hidden>
@@ -380,9 +382,7 @@
   <!-- ZAMAN -->
   <div class="head" id="head-zaman" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="time_eyebrow">Kronoloji</p>
       <h1 data-i18n="time_title">1967'den bugüne</h1>
-      <p class="lede" data-i18n="time_lede">Kaydırıcıyı hareket ettirin: hangi yılda hangi makinelerin yüzeyde olduğunu ve hangilerinin sustuğunu görün.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-zaman" hidden>
@@ -395,14 +395,13 @@
       <div class="ticks"><span>1967</span><span>1976</span><span>1990</span><span>2004</span><span>2026</span></div>
     </div>
     <div class="tl" id="tl"></div>
+    <div class="eras" id="eras"></div>
   </section>
 
   <!-- BİLİM -->
   <div class="head" id="head-bilim" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="sci_eyebrow">Teknoloji</p>
       <h1 data-i18n="sci_title">Makinelerin araçları</h1>
-      <p class="lede" data-i18n="sci_lede">Bu makinelerin taşıdığı başlıca bilimsel aletler ve ne işe yaradıkları. Etiketlere tıklayarak makineyi açın.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-bilim" hidden>
@@ -412,9 +411,7 @@
   <!-- RAKAMLAR -->
   <div class="head" id="head-rakamlar" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="num_eyebrow">Ölçek</p>
       <h1 data-i18n="num_title">Rakamlarla Ay ve Mars</h1>
-      <p class="lede" data-i18n="num_lede">Zaman, mesafe ve ağırlık. Dünya'dan bakınca küçük görünen bu makinelerin ne kadar yol gittiği.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-rakamlar" hidden>
@@ -429,9 +426,7 @@
   <!-- NASA ARŞİVİ -->
   <div class="head" id="head-goruntuler" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="arc_eyebrow">NASA Görsel Arşivi</p>
       <h1 data-i18n="arc_title">NASA arşivi</h1>
-      <p class="lede" data-i18n="arc_lede">NASA'nın açık görsel arşivinden canlı arama. Ay, Mars ya da uydu aramaları arasında geçiş yapın.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-goruntuler" hidden>
@@ -458,9 +453,7 @@
   <!-- QUIZ -->
   <div class="head" id="head-quiz" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="quiz_eyebrow">Test</p>
       <h1 data-i18n="quiz_title">Ne kadar hatırlıyorsun?</h1>
-      <p class="lede" data-i18n="quiz_lede">Her cevaptan sonra kısa bir açıklama var.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-quiz" hidden>
@@ -471,9 +464,7 @@
   <!-- SÖZLÜK -->
   <div class="head" id="head-sozluk" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="gl_eyebrow">Referans</p>
       <h1 data-i18n="gl_title">Sözlük</h1>
-      <p class="lede" data-i18n="gl_lede">Metinde geçen terimler.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-sozluk" hidden>
@@ -484,9 +475,7 @@
   <!-- KAYNAKÇA -->
   <div class="head" id="head-kaynakca" hidden>
     <div class="wrap">
-      <p class="eyebrow" data-i18n="src_title">Kaynakça</p>
       <h1 data-i18n="src_h">Kaynakça</h1>
-      <p class="lede" data-i18n="src_lede">Sitedeki bilgi, fotoğraf ve harita kaynakları. Metinlerde kaynak bağlantısı yoktur; hepsi bu sayfada toplanmıştır.</p>
     </div>
   </div>
   <section class="sec wrap" id="sec-kaynakca" hidden>
@@ -602,7 +591,8 @@ const T = {
     nav_sources: "Kaynakça", src_h: "Kaynakça",
     src_lede: "Sitedeki bilgi, fotoğraf ve harita kaynakları. Metinlerde kaynak bağlantısı yoktur; hepsi bu sayfada toplanmıştır.",
     fact_label: "Bilgi:",
-    game_quiz: "Quiz", game_wordle: "Kelime tahmini", game_fill: "Boşluk doldurma",
+    game_quiz: "Quiz", game_wordle: "Kelime tahmini", game_fill: "Boşluk doldurma", game_order: "Sıralama",
+    ord_q: "Makineleri iniş yılına göre sıralayın: en eskiden en yeniye. Sırayla tıklayın.", ord_reset: "Sıfırla", ord_check: "Kontrol et", ord_next: "Sonraki", ord_ok: "Doğru sıra.", ord_bad: "Doğru sıra şöyle:", ord_result: "Sonuç",
     wd_lede: "Gizli kelimeyi 6 denemede bulun. Yeşil: harf doğru yerde. Sarı: harf kelimede var ama yeri farklı. Gri: harf yok.",
     wd_hint: "İpucu", wd_placeholder: "Tahmininizi yazın", wd_submit: "Tahmin et", wd_new: "Yeni kelime",
     wd_win: "Tebrikler, kelimeyi buldunuz!", wd_lose: "Bu sefer olmadı. Doğru kelime:",
@@ -691,7 +681,8 @@ const T = {
     nav_sources: "Sources", src_h: "Sources",
     src_lede: "Sources for the information, photos and maps on this site. Text does not link to sources; all of them are collected on this page.",
     fact_label: "Fact:",
-    game_quiz: "Quiz", game_wordle: "Word guess", game_fill: "Fill in the blank",
+    game_quiz: "Quiz", game_wordle: "Word guess", game_fill: "Fill in the blank", game_order: "Ordering",
+    ord_q: "Put the machines in order of landing year: oldest first. Click them in sequence.", ord_reset: "Reset", ord_check: "Check", ord_next: "Next", ord_ok: "Correct order.", ord_bad: "The correct order is:", ord_result: "Result",
     wd_lede: "Find the hidden word in 6 tries. Green: right letter, right place. Yellow: letter is in the word but in another place. Gray: letter not in the word.",
     wd_hint: "Hint", wd_placeholder: "Type your guess", wd_submit: "Guess", wd_new: "New word",
     wd_win: "Well done, you found the word!", wd_lose: "Not this time. The word was:",
@@ -1129,7 +1120,16 @@ const instruments = [
     en:{ name:"MOXIE oxygen experiment", text:"A small device that tried to make oxygen from the carbon dioxide in Mars' atmosphere. It was designed as a first step toward future crewed missions." } },
   { n:"11", used:["curiosity"],
     tr:{ name:"Yakın çekim kamerası (MAHLI)", text:"Robot kolun ucundaki kamera, kayaların ve toprağın yakın çekim görüntülerini alır. Tanecik boyutunu ve dokuyu görmeyi sağlar." },
-    en:{ name:"Close-up camera (MAHLI)", text:"A camera on the robotic arm takes close-up images of rocks and soil. It shows grain size and texture." } }
+    en:{ name:"Close-up camera (MAHLI)", text:"A camera on the robotic arm takes close-up images of rocks and soil. It shows grain size and texture." } },
+  { n:"12", used:["curiosity"],
+    tr:{ name:"Gaz kromatografı ve kütle spektrometresi (SAM)", text:"Toprak ve kaya örneklerini ısıtır, çıkan gazları ayırıp analiz eder. Organik moleküllerin ve karbon izlerinin varlığını arar." },
+    en:{ name:"Gas chromatograph and mass spectrometer (SAM)", text:"Heats soil and rock samples, separates the gases released and analyzes them. It looks for organic molecules and traces of carbon." } },
+  { n:"13", used:["insight"],
+    tr:{ name:"Sismometre (SEIS)", text:"Mars'taki depremleri ve yüzeyin titreşimlerini ölçer. Gezegenin iç yapısını ortaya çıkarmak için kullanıldı." },
+    en:{ name:"Seismometer (SEIS)", text:"Measures marsquakes and vibrations of the surface. It was used to reveal the planet's internal structure." } },
+  { n:"14", used:["spirit","opportunity","curiosity","perseverance","zhurong"],
+    tr:{ name:"Stereo kamera mastı", text:"Gezginin üst kısmındaki direk üzerinde iki kamera taşır. Üç boyutlu görüntüler, sürüş rotasını planlamaya yarar." },
+    en:{ name:"Stereo camera mast", text:"Two cameras on a mast at the top of the rover. Three-dimensional images help plan the driving route." } }
 ];
 
 const quiz = [
@@ -1167,7 +1167,55 @@ const quiz = [
     tr:{ q:"Perseverance'ın ileride Dünya'ya getirilmesi planlanan şey nedir?", options:["Kaya ve toprak örnekleri","Ingenuity helikopteri","Güneş panelleri"],
       explain:"Perseverance, Mars'ta topladığı örnekleri tüplerde saklıyor. Bu örneklerin Dünya'ya getirilmesi planlanıyor." },
     en:{ q:"What is planned to be brought back to Earth from Perseverance's work?", options:["Rock and soil samples","The Ingenuity helicopter","Solar panels"],
-      explain:"Perseverance stores the samples it collects on Mars in tubes. Bringing these samples back to Earth is planned." } }
+      explain:"Perseverance stores the samples it collects on Mars in tubes. Bringing these samples back to Earth is planned." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Venera 13, Venüs'te yaklaşık iki saat çalıştı.", options:["Doğru","Yanlış"], explain:"Venera 13 yaklaşık 127 dakika veri gönderdi." },
+    en:{ q:"Venera 13 worked on Venus for about two hours.", options:["True","False"], explain:"Venera 13 sent data for about 127 minutes." } },
+  { answer:0,
+    tr:{ q:"Mars'ta kuzey bölgede su buzunu doğrudan ölçen araç hangisidir?", options:["Phoenix", "Sojourner", "Viking 1"], explain:"Phoenix toprağı kazarak altındaki su buzunu doğruladı." },
+    en:{ q:"Which Mars lander directly measured water ice in the northern soil?", options:["Phoenix", "Sojourner", "Viking 1"], explain:"Phoenix dug into the soil and confirmed water ice beneath it." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Ingenuity, 2021'de Mars'ta ilk kontrollü uçuşunu yaptı.", options:["Doğru","Yanlış"], explain:"Ingenuity, 19 Nisan 2021'de Mars'ta ilk kontrollü uçuşu gerçekleştirdi." },
+    en:{ q:"Ingenuity made the first controlled flight on Mars in 2021.", options:["True","False"], explain:"Ingenuity flew for the first time on April 19, 2021." } },
+  { answer:1,
+    tr:{ q:"Lunokhod 2 yaklaşık ne kadar yol kat etti?", options:["3,7 km", "37 km", "370 km"], explain:"Lunokhod 2, Ay gezginleri arasında en uzun mesafeyi katetti: yaklaşık 37 km." },
+    en:{ q:"About how far did Lunokhod 2 travel?", options:["3.7 km", "37 km", "370 km"], explain:"Lunokhod 2 covered about 37 km, the longest distance of any Moon rover." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Huygens, Titan'a inen tek iniş aracıdır.", options:["Doğru","Yanlış"], explain:"Huygens, 2005'te Titan'a inen tek iniş aracıdır." },
+    en:{ q:"Huygens is the only lander to have landed on Titan.", options:["True","False"], explain:"Huygens landed on Titan in 2005; no other lander has done so." } },
+  { answer:1,
+    tr:{ q:"Apollo 15'te kullanılan elektrikli gezgin ne olarak adlandırılır?", options:["Lunokhod", "Ay Gezgini (LRV)", "Yutu-2"], explain:"Apollo gezgini, astronotların Ay'da araçla sürüş yapmasını sağladı." },
+    en:{ q:"What is the electric rover used on Apollo 15 called?", options:["Lunokhod", "Lunar Roving Vehicle (LRV)", "Yutu-2"], explain:"The Apollo rover let astronauts drive on the Moon." } },
+  { answer:0,
+    tr:{ q:"InSight'ın ana bilimsel aleti neyi ölçtü?", options:["Mars'taki sismik titreşimleri", "Kaya yaşlarını", "Hava nemini"], explain:"InSight'ın sismometresi, Mars'ın iç yapısı hakkında veri verdi." },
+    en:{ q:"What did InSight's main instrument measure?", options:["Seismic vibrations on Mars", "Rock ages", "Air humidity"], explain:"InSight's seismometer provided data on Mars' interior." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Pragyan, Ay'ın güney kutbu yakınında çalıştı.", options:["Doğru","Yanlış"], explain:"Pragyan, 2023'te Ay'ın güney kutbu yakınında çalıştı." },
+    en:{ q:"Pragyan worked near the Moon's south pole.", options:["True","False"], explain:"Pragyan worked near the south pole in 2023." } },
+  { answer:1,
+    tr:{ q:"Zhurong hangi görevin gezginidir?", options:["Chang'e-4", "Tianwen-1", "Chandrayaan-2"], explain:"Zhurong, Çin'in Tianwen-1 görevinin gezginidir." },
+    en:{ q:"Zhurong is the rover of which mission?", options:["Chang'e-4", "Tianwen-1", "Chandrayaan-2"], explain:"Zhurong is the rover of China's Tianwen-1 mission." } },
+  { answer:0,
+    tr:{ q:"Mars ile Dünya arasındaki en küçük uzaklık yaklaşık ne kadardır?", options:["Yaklaşık 55 milyon km", "Yaklaşık 384.000 km", "Yaklaşık 1 milyar km"], explain:"Mars, Dünya'ya en çok yaklaştığında yaklaşık 55 milyon km uzaklıktadır." },
+    en:{ q:"What is the closest distance between Mars and Earth, roughly?", options:["About 55 million km", "About 384,000 km", "About 1 billion km"], explain:"At its closest, Mars is about 55 million km from Earth." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Sojourner, Mars'ta çalışan ilk gezgindir.", options:["Doğru","Yanlış"], explain:"Sojourner, 1997'de Mars Pathfinder ile Mars'a indi." },
+    en:{ q:"Sojourner was the first rover to work on Mars.", options:["True","False"], explain:"Sojourner landed with Mars Pathfinder in 1997." } },
+  { answer:0,
+    tr:{ q:"Venüs'ün yüzey sıcaklığı yaklaşık ne kadardır?", options:["Yaklaşık 465 °C", "Yaklaşık -60 °C", "Yaklaşık 20 °C"], explain:"Venüs'ün yüzeyi kurşunu eritecek kadar sıcaktır (yaklaşık değer)." },
+    en:{ q:"Roughly what is the surface temperature of Venus?", options:["About 465 °C", "About -60 °C", "About 20 °C"], explain:"Venus' surface is hot enough to melt lead (approximate)." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Curiosity, Gale Krateri'nde çalışıyor.", options:["Doğru","Yanlış"], explain:"Curiosity, 2012'den beri Gale Krateri'nde çalışıyor." },
+    en:{ q:"Curiosity works in Gale Crater.", options:["True","False"], explain:"Curiosity has worked in Gale Crater since 2012." } },
+  { answer:0,
+    tr:{ q:"Yutu-2 hangi uzay görevinin gezginidir?", options:["Chang'e-4", "Luna 21", "Tianwen-1"], explain:"Yutu-2, Çin'in Chang'e-4 iniş aracıyla Ay'ın uzak yüzüne indi." },
+    en:{ q:"Yutu-2 is the rover of which mission?", options:["Chang'e-4", "Luna 21", "Tianwen-1"], explain:"Yutu-2 landed on the Moon's far side with China's Chang'e-4 lander." } },
+  { answer:0, type:"tf",
+    tr:{ q:"Apollo 11'in iniş kademesi Ay'da yerinde kaldı.", options:["Doğru","Yanlış"], explain:"Kalkış aşaması ayrıldıktan sonra iniş kademesi Ay'da kaldı." },
+    en:{ q:"The Apollo 11 descent stage was left on the Moon.", options:["True","False"], explain:"After the ascent stage lifted off, the descent stage stayed on the Moon." } },
+  { answer:0,
+    tr:{ q:"Phoenix hangi bölgede çalıştı?", options:["Mars'ın kuzey bölgesi", "Ekvator", "Güney kutbu"], explain:"Phoenix, Mars'ın kuzey bölgesinde buzlu toprağı inceledi." },
+    en:{ q:"In which region did Phoenix work?", options:["Northern Mars", "The equator", "The south pole"], explain:"Phoenix studied icy soil in Mars' northern region." } }
 ];
 
 const glossary = [
@@ -1192,7 +1240,17 @@ const glossary = [
   { tr:["Jezero Krateri", "Perseverance'ın indiği krater. Eskiden bir gölün ve akarsuların deltası olduğu düşünülüyor."], en:["Jezero Crater", "The crater where Perseverance landed. It is thought to have once held a lake and a river delta."] },
   { tr:["Gale Krateri", "Curiosity'nin çalıştığı büyük krater. Merkezinde Şarp Dağı yer alır."], en:["Gale Crater", "The large crater where Curiosity works. Mount Sharp rises from its center."] },
   { tr:["Mars Pathfinder", "1997'de Mars'a inen ve Sojourner gezginini taşıyan NASA iniş aracı."], en:["Mars Pathfinder", "The NASA lander that reached Mars in 1997 and carried the Sojourner rover."] },
-  { tr:["Chang'e", "Çin'in Ay programı. Chang'e-4, 2019'da Ay'ın uzak yüzüne inen ilk araç oldu."], en:["Chang'e", "China's Moon program. Chang'e-4 became the first spacecraft to land on the Moon's far side in 2019."] }
+  { tr:["Chang'e", "Çin'in Ay programı. Chang'e-4, 2019'da Ay'ın uzak yüzüne inen ilk araç oldu."], en:["Chang'e", "China's Moon program. Chang'e-4 became the first spacecraft to land on the Moon's far side in 2019."] },
+  { tr:["Sismometre", "Yüzeydeki titreşimleri ve depremleri kaydeden alet."], en:["Seismometer", "An instrument that records vibrations and quakes in the ground."] },
+  { tr:["Gaz kromatografisi", "Bir örneği ısıtıp oluşan gazları ayıran analiz yöntemi."], en:["Gas chromatography", "An analysis method that heats a sample and separates the gases it releases."] },
+  { tr:["Kütle spektrometresi", "Gaz moleküllerini kütlelerine göre ayırıp tanımlayan cihaz."], en:["Mass spectrometer", "A device that separates and identifies gas molecules by their mass."] },
+  { tr:["Atmosfer basıncı", "Bir gezegenin yüzeyine uygulanan havanın ağırlığı. Venüs'te Dünya'dakinden çok daha yüksektir."], en:["Atmospheric pressure", "The weight of the air pressing on a planet's surface. It is much higher on Venus than on Earth."] },
+  { tr:["Metan", "Karbon ve hidrojenden oluşan gaz. Titan'ın atmosferinde ve yüzeyindeki sıvılarda bulunur."], en:["Methane", "A gas made of carbon and hydrogen. It is found in Titan's atmosphere and in liquids on its surface."] },
+  { tr:["Su buzu", "Donmuş su. Mars'ın kuzey bölgesinde ve Phoenix'in ölçtüğü toprakta bulundu."], en:["Water ice", "Frozen water. It was found in Mars' northern soil, as measured by Phoenix."] },
+  { tr:["Stereo görüntü", "İki farklı açıdan çekilmiş iki görüntünün birlikte üç boyutlu bir etki yaratması."], en:["Stereo image", "Two images taken from slightly different angles that together create a three-dimensional effect."] },
+  { tr:["Yörünge", "Bir cismin başka bir cisim etrafındaki kapalı yolu. Uydular ve uzay araçları yörüngede dolaşır."], en:["Orbit", "The closed path of an object around another. Moons and spacecraft travel in orbits."] },
+  { tr:["Basınç ve sıcaklık", "Venüs'ün yüzeyi sıcaklık ve basınç açısından, makinelerin dayanabileceğinden çok daha zor bir ortamdır."], en:["Pressure and temperature", "Venus's surface is far harsher in temperature and pressure than machines can usually withstand."] },
+  { tr:["Radar dalgası", "Yüzeye gönderilip geri dönen elektromanyetik dalga. Yer altı katmanlarını ortaya çıkarmakta kullanılır."], en:["Radar wave", "An electromagnetic wave sent to a surface whose echo is measured. Used to reveal layers beneath the ground."] }
 ];
 
 const SOURCES = [
@@ -1216,6 +1274,8 @@ const SOURCES = [
   { href:"https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m", tr:"USGS: Mars Viking renkli global mozaik, 232 m (referans)", en:"USGS: Mars Viking colorized global mosaic, 232 m (reference)" },
   { href:"https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m", tr:"USGS: Mars MOLA yükseklik modeli, 463 m (yükseklik verisi, renkli doku değil)", en:"USGS: Mars MOLA elevation model, 463 m (elevation data, not a color texture)" },
   { href:"https://images.nasa.gov/", tr:"NASA Görsel Arşivi (images-api.nasa.gov): sitedeki canlı arama ve makine fotoğrafları", en:"NASA Image Archive (images-api.nasa.gov): live search and machine photos on this site" },
+  { href:"https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html", tr:"NASA NSSDC: Venüs bilgi sayfası (atmosfer basıncı, sıcaklık)", en:"NASA NSSDC: Venus fact sheet (pressure, temperature)" },
+  { href:"https://nssdc.gsfc.nasa.gov/planetary/factsheet/titanfact.html", tr:"NASA NSSDC: Titan bilgi sayfası (yüzey basıncı)", en:"NASA NSSDC: Titan fact sheet (surface pressure)" },
   { href:"https://commons.wikimedia.org/wiki/File:Foto_de_Venera_9.png", tr:"Wikimedia Commons: Venera 9 yüzey fotoğrafı (kamu malı)", en:"Wikimedia Commons: Venera 9 surface photo (public domain)" },
   { href:"https://commons.wikimedia.org/wiki/File:Surveyor_1_-_America%E2%80%99s_first_soft_lunar_landing_(LROC13_-_surv_thumb).png", tr:"Wikimedia Commons: Surveyor 1, LRO görüntüsü (kamu malı)", en:"Wikimedia Commons: Surveyor 1, LRO image (public domain)" },
   { href:"https://commons.wikimedia.org/wiki/File:Surveyor_7_-_America%27s_Last_Lunar_Unmanned_Lander_(LROC534).tiff", tr:"Wikimedia Commons: Surveyor 7, LRO görüntüsü (kamu malı)", en:"Wikimedia Commons: Surveyor 7, LRO image (public domain)" },
@@ -1254,7 +1314,13 @@ const STATS = [
   { e:{tr:"Mars'a en yakın yaklaşım", en:"Closest approach to Mars"}, n:{tr:"~55 milyon km", en:"~55 million km"},
     p:{tr:"Mars Dünya'ya en çok yaklaştığında yaklaşık 55 milyon km uzaklıktadır; bu, ortalama uzaklığından çok daha yakındır.", en:"At its closest, Mars is about 55 million km from Earth; its average distance is much greater."} },
   { e:{tr:"Perseverance'ın örnek tüpleri", en:"Perseverance sample tubes"}, n:{tr:"43 tüp", en:"43 tubes"},
-    p:{tr:"Perseverance, örnek saklamak için 43 tüp taşıyor. Bu tüplerin bir kısmı Mars'ta dolu olarak bırakılacak.", en:"Perseverance carries 43 tubes for storing samples. Some of them will be left on Mars after being filled."} } ];
+    p:{tr:"Perseverance, örnek saklamak için 43 tüp taşıyor. Bu tüplerin bir kısmı Mars'ta dolu olarak bırakılacak.", en:"Perseverance carries 43 tubes for storing samples. Some of them will be left on Mars after being filled."} },
+  { e:{tr:"Venüs'te yüzey basıncı", en:"Surface pressure on Venus"}, n:{tr:"~92 bar", en:"~92 bar"},
+    p:{tr:"Venüs'te yüzey basıncı Dünya'nınkinin yaklaşık 92 katıdır (yaklaşık değer; NASA Venüs bilgi sayfası).", en:"Surface pressure on Venus is about 92 times Earth's (approximate; NASA Venus fact sheet)."} },
+  { e:{tr:"Venüs'te yüzey sıcaklığı", en:"Surface temperature on Venus"}, n:{tr:"~465 °C", en:"~465 °C"},
+    p:{tr:"Venüs'ün yüzey sıcaklığı kurşunu eritecek kadar yüksektir (yaklaşık değer).", en:"The surface temperature of Venus is high enough to melt lead (approximate)."} },
+  { e:{tr:"Titan'ın yüzey basıncı", en:"Surface pressure on Titan"}, n:{tr:"~1,5 bar", en:"~1.5 bar"},
+    p:{tr:"Titan'ın atmosferinin yüzey basıncı Dünya'nın yaklaşık 1,5 katıdır (yaklaşık değer; NASA Titan bilgi sayfası).", en:"Titan's surface pressure is about 1.5 times Earth's (approximate; NASA Titan fact sheet)."} } ];
 
 const SHOTS = [
   { src:"moon_a", tr:"Ay · tam disk", en:"Moon · full disk", tag:{tr:"Ay", en:"Moon"} },
@@ -1292,11 +1358,10 @@ const PHOTO_LOCAL = {
   lunokhod2: { src: "img/lunokhod2.jpg", title: "Lunokhod 2 · NASA/LRO görüntüsü (kamu malı)" },
   yutu2: { src: "img/yutu2.jpg", title: "Yutu-2 · CNSA/CLEP (CC BY 4.0)" },
   venera13: { src: "img/venera13.jpg", title: "Venera 13 yüzey panoraması · SSCB/NASA (kamu malı)" },
-  venera9: { src: "img/venera9.png", title: "Venera 9'un Venüs yüzeyinden çektiği fotoğraf · SSCB (kamu malı)" },
   surveyor1: { src: "img/surveyor1.png", title: "Surveyor 1 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
   surveyor7: { src: "img/surveyor7.jpg", title: "Surveyor 7 · NASA/GSFC/ASU, LRO görüntüsü (kamu malı)" },
   apollo12: { src: "img/apollo12.jpg", title: "Apollo 12 Intrepid · NASA (kamu malı)" },
-  phoenix: { src: "img/phoenix.jpg", title: "Phoenix · NASA/KSC, uçuş öncesi hazırlık (kamu malı)" },
+  phoenix: { src: "img/phoenix.jpg", title: "Phoenix iniş aracı, Mars yüzeyinde · NASA/JPL/UArizona (kamu malı)" },
   insight: { src: "img/insight.jpg", title: "InSight iniş aracının güverte görüntüsü · NASA/JPL (kamu malı)" },
   zhurong: { src: "img/zhurong.jpg", title: "Tianwen-1 iniş aracı ve Zhurong · NASA/JPL/UArizona, HiRISE (kamu malı)" },
   pragyan: { src: "img/pragyan.png", title: "Pragyan gezgini · ISRO (GODL-India)" },
@@ -1800,7 +1865,7 @@ function renderBars() {
 /* ================= GALERİ & LIGHTBOX ================= */
 function galleryHtml() {
   return SHOTS.map((s, i) => `
-    <figure class="shot reveal" data-shot="${i}">
+    <figure class="shot" data-shot="${i}">
       <div class="frame"><img src="${IMG[s.src]}" alt="${loc({ tr: s.tr, en: s.en })}" loading="lazy"></div>
       <figcaption><b>${loc({ tr: s.tr, en: s.en })}</b><span>${loc(s.tag)}</span></figcaption>
     </figure>`).join("");
@@ -1853,6 +1918,21 @@ function answerQuiz(i) {
   showAnswer(i);
 }
 
+/* Zaman çizelgesi: dönem özetleri */
+const ERAS = [
+  { y:"1966–1972", tr:"İlk inişler", text_tr:"Surveyor 1, Apollo 11, Apollo 12 ve Apollo 15–17 Ay'a indi. İlk robotik gezgin ve insanlı gezgin bu dönemde kullanıldı.", en:"First landings", text_en:"Surveyor 1, Apollo 11, Apollo 12 and Apollo 15–17 landed on the Moon. The first crewed rovers were used in this period." },
+  { y:"1970–1976", tr:"Sovyet gezginleri ve Venüs", text_tr:"Lunokhod 1 Ay'da çalıştı. Venera 9 Venüs yüzeyinden ilk görüntüleri gönderdi. Viking 1 ve 2 Mars'a indi.", en:"Soviet rovers and Venus", text_en:"Lunokhod 1 worked on the Moon. Venera 9 sent the first images from Venus' surface. Viking 1 and 2 landed on Mars." },
+  { y:"1982–2005", tr:"Sessiz yıllar", text_tr:"Venera 13 ve 14 Venüs'te kısa süre çalıştı. 1983–1996 arasında bu listedeki makinelerden hiçbiri iniş yapmadı. Huygens 2005'te Titan'a indi.", en:"Quiet years", text_en:"Venera 13 and 14 worked briefly on Venus. None of the machines in this list landed between 1983 and 1996. Huygens landed on Titan in 2005." },
+  { y:"1997–2012", tr:"Mars gezginleri", text_tr:"Sojourner (1997) ve Spirit ile Opportunity (2004) Mars'ta çalıştı. Phoenix 2008'de kuzey bölgede su buzunu doğruladı. Curiosity 2012'de indi.", en:"Mars rovers", text_en:"Sojourner (1997), Spirit and Opportunity (2004) worked on Mars. Phoenix confirmed water ice in the north in 2008. Curiosity landed in 2012." },
+  { y:"2013–2020", tr:"Ay'ın uzak yüzü ve Mars'ın iç yapısı", text_tr:"InSight (2018) Mars'ın iç yapısını sismik dalgalarla inceledi. Yutu-2 (2019) Ay'ın uzak yüzüne indi.", en:"The Moon's far side and Mars' interior", text_en:"InSight (2018) studied Mars' interior with seismic waves. Yutu-2 (2019) landed on the Moon's far side." },
+  { y:"2021–2026", tr:"Yeni gezginler", text_tr:"Perseverance ve Ingenuity (2021) Jezero'da çalıştı. Zhurong (2021) Utopia Planitia'da, Pragyan (2023) Ay'ın güney kutbunda çalıştı.", en:"New rovers", text_en:"Perseverance and Ingenuity (2021) worked in Jezero. Zhurong (2021) worked in Utopia Planitia, and Pragyan (2023) near the Moon's south pole." }
+];
+function renderEras() {
+  const L2 = state.lang === "en";
+  document.getElementById("eras").innerHTML = ERAS.map(e =>
+    `<div class="era reveal"><p class="era-y">${e.y}</p><h3>${L2 ? e.en : e.tr}</h3><p>${L2 ? e.text_en : e.text_tr}</p></div>`).join("");
+}
+
 /* ================= KELİME TAHMİNİ VE BOŞLUK DOLDURMA ================= */
 let gameMode = "quiz", wdState = null, flState = { i: 0, score: 0, answered: null };
 const WORDS = {
@@ -1862,7 +1942,9 @@ const WORDS = {
     { w: "DELTA", h: "Bir akarsuyun durgun göle döküldüğü yerde biriken tortu." },
     { w: "RADAR", h: "Dalga göndererek ölçüm yapan sistem." },
     { w: "GEZGIN", h: "Bir gezegen yüzeyinde hareket edebilen robotik araç." },
-    { w: "UYDU", h: "Bir gezegenin çevresinde dönen gök cismi." }
+    { w: "UYDU", h: "Bir gezegenin çevresinde dönen gök cismi." },
+    { w: "VENUS", h: "Güneş'e en yakın ikinci gezegen; yüzeyi çok sıcak ve kalın bulutlu." },
+    { w: "YORUNGE", h: "Bir cismin başka bir cisim etrafındaki kapalı yolu." }
   ],
   en: [
     { w: "CRATER", h: "A depression formed when an object strikes a surface." },
@@ -1870,7 +1952,9 @@ const WORDS = {
     { w: "ROVER", h: "A robotic vehicle that moves across a planet's surface." },
     { w: "ORBIT", h: "The curved path an object follows around a planet." },
     { w: "LUNAR", h: "Relating to the Moon." },
-    { w: "SOL", h: "A Martian solar day." }
+    { w: "SOL", h: "A Martian solar day." },
+    { w: "TITAN", h: "Saturn's largest moon, with a thick atmosphere." },
+    { w: "PHOENIX", h: "A lander that confirmed water ice in Mars' north." }
   ]
 };
 const FILL = {
@@ -1882,7 +1966,13 @@ const FILL = {
     { s: "Mars'ta çalışan ilk gezgin ___ oldu.", a: "Sojourner", ex: "Sojourner, 1997'de Pathfinder ile Mars'a indi." },
     { s: "Ay'ın Dünya'ya ortalama uzaklığı yaklaşık ___ bin kilometredir.", a: "384", ex: "Ay'ın ortalama uzaklığı yaklaşık 384.400 km'dir." },
     { s: "Perseverance, kaya örneklerini ___ içinde saklar.", a: "tüp", ex: "Perseverance, örnek saklamak için 43 tüp taşıyor." },
-    { s: "Apollo 11'in ___ kademesi Ay'da yerinde kaldı.", a: "iniş", ex: "Kalkış aşaması astronotları yörüngeye çıkardı; iniş kademesi geride kaldı." }
+    { s: "Apollo 11'in ___ kademesi Ay'da yerinde kaldı.", a: "iniş", ex: "Kalkış aşaması astronotları yörüngeye çıkardı; iniş kademesi geride kaldı." },
+    { s: "Venüs'ü ziyaret eden ilk iniş araçları Sovyet ___ serisiydi.", a: "Venera", ex: "Venera serisi Venüs yüzeyine indi ve görüntüler gönderdi." },
+    { s: "Titan'a inen tek iniş aracı ___'dır.", a: "Huygens", ex: "Huygens, ESA'nın aracıydı ve Cassini ile Satürn'e gitti." },
+    { s: "Mars'ta suyun buzunu doğrudan ölçen iniş aracı ___.", a: "Phoenix", ex: "Phoenix 2008'de Mars'ın kuzey bölgesinde toprağı kazdı." },
+    { s: "Ay'ın uzak yüzüne inen ilk araç ___-4 görevinin parçasıydı.", a: "Chang'e", ex: "Chang'e-4, 2019'da Ay'ın uzak yüzüne indi." },
+    { s: "Mars'ın iç yapısını sismik dalgalarla inceleyen araç ___.", a: "InSight", ex: "InSight, 2018'de Elysium Planitia'ya indi." },
+    { s: "Venüs'ün yüzey basıncı Dünya'nın yaklaşık ___ katıdır.", a: "92", ex: "Venüs'te yüzey basıncı yaklaşık 92 bardır (yaklaşık değer)." }
   ],
   en: [
     { s: "On Mars, a solar day is called a ___.", a: "sol", ex: "A sol is about 24 hours and 40 minutes long." },
@@ -1892,7 +1982,13 @@ const FILL = {
     { s: "The first rover to operate on Mars was ___.", a: "Sojourner", ex: "Sojourner landed in 1997 with Mars Pathfinder." },
     { s: "Lunokhod 2 covered about ___ km.", a: "37", ex: "Lunokhod 2 covered about 37 km, the longest of any Moon rover." },
     { s: "Perseverance stores its samples in ___.", a: "tubes", ex: "Perseverance carries 43 sample tubes." },
-    { s: "Apollo 11's ___ stage stayed on the Moon.", a: "descent", ex: "The ascent stage took the astronauts back to orbit; the descent stage stayed behind." }
+    { s: "Apollo 11's ___ stage stayed on the Moon.", a: "descent", ex: "The ascent stage took the astronauts back to orbit; the descent stage stayed behind." },
+    { s: "The first Soviet landers to reach Venus' surface belonged to the ___ series.", a: "Venera", ex: "The Venera series landed on Venus and sent images back." },
+    { s: "The only lander to touch down on Titan is ___.", a: "Huygens", ex: "Huygens was ESA's probe, carried to Saturn by Cassini." },
+    { s: "The lander that directly measured water ice on Mars was ___.", a: "Phoenix", ex: "Phoenix dug into the soil of Mars' north in 2008." },
+    { s: "The first spacecraft to land on the Moon's far side was part of the ___-4 mission.", a: "Chang'e", ex: "Chang'e-4 landed on the Moon's far side in 2019." },
+    { s: "The lander that studied Mars' interior with seismic waves was ___.", a: "InSight", ex: "InSight landed in Elysium Planitia in 2018." },
+    { s: "The surface pressure on Venus is about ___ times that of Earth.", a: "92", ex: "Surface pressure on Venus is about 92 bar (approximate)." }
   ]
 };
 const foldText = s => s.toLocaleLowerCase("tr-TR").replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u").replace(/[^a-z0-9]/g, "");
@@ -1913,14 +2009,45 @@ function newWordle() {
   wdState = { t: pick.w, h: pick.h, rows: [], msg: "", over: false };
 }
 function renderGameModes() {
-  const modes = [["quiz", "game_quiz"], ["wordle", "game_wordle"], ["fill", "game_fill"]];
+  const modes = [["quiz", "game_quiz"], ["wordle", "game_wordle"], ["fill", "game_fill"], ["order", "game_order"]];
   document.getElementById("game-modes").innerHTML = modes.map(([k, l]) =>
     `<button class="btn" data-game="${k}" aria-pressed="${gameMode === k}">${L(l)}</button>`).join("");
 }
 function renderGame() {
   if (gameMode === "wordle") renderWordle();
   else if (gameMode === "fill") renderFill();
+  else if (gameMode === "order") renderOrder();
   else renderQuiz();
+}
+const ORDER_SETS = [
+  ["surveyor1", "apollo11", "lunokhod1", "venera9"],
+  ["viking1", "sojourner", "spirit", "curiosity"],
+  ["phoenix", "insight", "yutu2", "pragyan"],
+  ["apollo15", "venera13", "huygens", "opportunity"]
+];
+let ordState = { set: 0, picked: [], done: false, ok: null, round: 0 };
+function renderOrder() {
+  const root = document.getElementById("quiz-root");
+  const ids = ORDER_SETS[ordState.set % ORDER_SETS.length];
+  const correct = ids.slice().sort((a, b) => byId[a].year - byId[b].year);
+  const label = id => `${mf(byId[id], "name")} (${byId[id].year})`;
+  const remaining = ids.filter(id => !ordState.picked.includes(id));
+  const shown = ordState.done ? "" : remaining.map(id => `<button class="opt" data-ord="${id}">${mf(byId[id], "name")}</button>`).join("");
+  const chosen = ordState.picked.map((id, i) => `<li>${i + 1}. ${label(id)}</li>`).join("");
+  root.innerHTML = `
+    <div class="qprog"><span style="width:${(ordState.picked.length / ids.length * 100).toFixed(0)}%"></span></div>
+    <p class="eyebrow">${L("game_order")}</p>
+    <h3 class="qtext">${L("ord_q")}</h3>
+    <div class="opts">${shown}</div>
+    <ol class="ord-list">${chosen}</ol>
+    ${ordState.done ? `<p class="feedback">${ordState.ok ? L("ord_ok") : L("ord_bad") + " " + correct.map(label).join(" → ")}</p>
+      <button class="btn btn-solid" data-ord-next>${L("ord_next")}</button>`
+      : `<button class="btn" data-ord-reset>${L("ord_reset")}</button>`}`;
+  if (!ordState.done && ordState.picked.length === ids.length) {
+    ordState.done = true;
+    ordState.ok = ordState.picked.every((id, i) => id === correct[i]);
+    renderOrder();
+  }
 }
 function setGame(g) { gameMode = g; renderGameModes(); renderGame(); }
 function renderWordle() {
@@ -2051,7 +2178,7 @@ async function loadNasa() {
   renderNasa();
   try {
     const c = await nasaSearch({ q: N.q, media_type: "image", year_start: N.ys, year_end: N.ye, page: N.page, page_size: PAGE_SIZE });
-    N.items = c.items.filter(it => it.links && it.links[0] && it.data && it.data[0]);
+    N.items = c.items.filter(it => it.links && it.links[0] && it.data && it.data[0] && !/operations|infrastructure|transportation|multidisciplinary|mapping|albedo|signature|diagram|chart|logo|illustration/i.test(it.data[0].title));
     N.total = Number(c.metadata && c.metadata.total_hits) || 0;
   } catch (err) {
     N.items = []; N.total = 0; N.error = true;
@@ -2202,6 +2329,9 @@ document.addEventListener("click", e => {
   if (t.closest("[data-wd-new]")) { newWordle(); return renderWordle(); }
   if (t.closest("[data-fl-next]")) { flState.i++; flState.answered = null; return renderFill(); }
   if (t.closest("[data-fl-restart]")) { flState = { i: 0, score: 0, answered: null }; return renderFill(); }
+  if ((el = t.closest("[data-ord]"))) { ordState.picked.push(el.dataset.ord); return renderOrder(); }
+  if (t.closest("[data-ord-reset]")) { ordState.picked = []; return renderOrder(); }
+  if (t.closest("[data-ord-next]")) { ordState = { set: ordState.set + 1, picked: [], done: false, ok: null }; return renderOrder(); }
   if ((el = t.closest("[data-opt]"))) return answerQuiz(Number(el.dataset.opt));
   if (t.closest("#next")) { qi++; qAns = null; return renderQuiz(); }
   if (t.closest("[data-restart]")) { qi = 0; qScore = 0; qAns = null; return renderQuiz(); }
@@ -2236,6 +2366,7 @@ renderTimeline();
 renderInstruments();
 renderBars();
 renderStats();
+renderEras();
 renderGameModes();
 renderQuiz();
 renderGlossary();
