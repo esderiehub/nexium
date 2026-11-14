@@ -362,19 +362,18 @@
   .page-text { font-size: 19px; line-height: 1.8; }
   .kids-story .pager { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
   html[data-mode="kids"] [data-ptab="neden"] { display: none !important; }
+  .gate-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; flex-wrap: wrap; }
+  .tour { padding-left: 20px; margin: 14px 0 0; color: var(--text-2); }
+  .tour li { margin-bottom: 8px; }
+  .nex-bubble { position: fixed; right: 22px; bottom: 124px; z-index: 125; max-width: 300px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+  .nex-bubble p { margin: 0; }
+  html:not([data-mode="kids"]) .nex-bubble { display: none !important; }
 </style>
 </head>
 <body>
 
 <div class="mode-gate" id="mode-gate" hidden>
-  <div class="mode-card" role="dialog" aria-modal="true" aria-labelledby="mode-title">
-    <h2 id="mode-title" data-i18n="mode_title">Nasıl devam etmek istersiniz?</h2>
-    <p data-i18n="mode_text">Bu seçimi istediğiniz zaman üst menüden değiştirebilirsiniz.</p>
-    <div class="mode-opts">
-      <button class="mode-opt" type="button" data-mode-choice="kids"><b data-i18n="mode_kids">İlkokul için basit anlatım</b><span data-i18n="mode_kids_desc">Daha büyük yazılar, daha az sekme ve kısa metinler.</span></button>
-      <button class="mode-opt" type="button" data-mode-choice="std"><b data-i18n="mode_std">Standart</b><span data-i18n="mode_std_desc">Tüm bölümler ve ayrıntılı metinler.</span></button>
-    </div>
-  </div>
+  <div class="mode-card" id="gate-card" role="dialog" aria-modal="true"></div>
 </div>
 
 <header class="topbar">
@@ -2415,7 +2414,11 @@ document.addEventListener("click", e => {
   if ((el = t.closest(".nav [data-tab]"))) return showTab(el.dataset.tab);
   if ((el = t.closest("[data-lang]"))) return setLang(el.dataset.lang);
   if (t.closest("[data-theme-toggle]")) return toggleTheme();
-  if ((el = t.closest("[data-mode-choice]"))) return chooseMode(el.dataset.modeChoice);
+  if ((el = t.closest("[data-gate-lang]"))) { setLang(el.dataset.gateLang); return gateStep("mode"); }
+  if ((el = t.closest("[data-mode-choice]"))) { chooseMode(el.dataset.modeChoice); return gateStep("tour"); }
+  if (t.closest("[data-gate-start]")) return finishGate();
+  if (t.closest("[data-nex-chat]")) { document.getElementById("nex-bubble").hidden = true; if (document.getElementById("chat").hidden) toggleChat(); return; }
+  if (t.closest("[data-nex-close]")) { document.getElementById("nex-bubble").hidden = true; return; }
   if (t.closest("[data-mascot]")) return toggleChat();
   if (t.closest("[data-chat-close]")) { document.getElementById("chat").hidden = true; return; }
   if ((el = t.closest("[data-chip]"))) return sendChat(el.dataset.chip);
@@ -2556,14 +2559,13 @@ function applyMode(m) {
 }
 function chooseMode(m) {
   applyMode(m);
-  document.getElementById("mode-gate").hidden = true;
   try { localStorage.setItem("nexium-mode", m); } catch (e) {}
   if (m === "kids" && ["zaman", "rakamlar", "goruntuler", "kaynakca"].includes(state.tab)) showTab("gezegen");
 }
 let savedMode = null;
 try { savedMode = localStorage.getItem("nexium-mode"); } catch (e) {}
 applyMode(savedMode === "kids" ? "kids" : "std");
-document.getElementById("mode-gate").hidden = savedMode === "kids" || savedMode === "std";
+setTimeout(() => { try { if (!localStorage.getItem("nexium-onboarded")) gateStep("lang"); } catch (e) { gateStep("lang"); } }, 0);
 
 /* ================= ÇOCUK MODU: SAMİ, YILDIZ, ROZET, HİKÂYE ================= */
 const KT = {
@@ -2717,6 +2719,76 @@ function kidsStory(m) {
     </div></div>`;
 }
 
+/* ================= KARŞILAMA: dil, mod, tanıtım, Nex ================= */
+const KG = {
+  tr: {
+    tour_title: "Sitede neler var?",
+    tour: [
+      "Gezegen: Ay, Mars, Venüs ve Titan'ı döndürün. Bir noktaya tıklayınca makinenin kartı açılır.",
+      "Makineler: 27 makineyi arayın ve filtreleyin.",
+      "Zaman, Bilim ve Rakamlar: yıllara, bilimsel aletlere ve sayılara bakın.",
+      "NASA Arşivi: NASA'nın görsel arşivinde arama yapın.",
+      "Quiz, Sözlük ve Kaynakça: testleri çözün, terimlere bakın, kaynakları görün.",
+      "Yıldızlar (ilkokul modunda): Quiz ve oyunlarda doğru cevaplar yıldız kazandırır, rozetler de açılır."
+    ],
+    start: "Başla",
+    nex_intro: "Merhaba, ben Nex! Bu sitedeki bilgilerle sana yardım ederim. Bir şey sormak ister misin?",
+    nex_chat: "Nex ile konuş", nex_close: "Kapat",
+    kids: "İlkokul için basit anlatım", kids_desc: "Daha büyük yazılar, daha az sekme, Nex ve yıldızlar.",
+    std: "Standart", std_desc: "Tüm bölümler ve ayrıntılı metinler."
+  },
+  en: {
+    tour_title: "What's on the site?",
+    tour: [
+      "Globe: rotate the Moon, Mars, Venus and Titan. Click a point to open its machine card.",
+      "Machines: search and filter the 27 machines.",
+      "Timeline, Science and Figures: explore the years, scientific instruments and numbers.",
+      "NASA Archive: search NASA's image archive.",
+      "Quiz, Glossary and Sources: take quizzes, read terms and see the sources.",
+      "Stars (in simple mode): correct answers in quizzes and games earn stars, and badges unlock."
+    ],
+    start: "Start",
+    nex_intro: "Hi, I'm Nex! I can help you with the information on this site. Want to ask me something?",
+    nex_chat: "Chat with Nex", nex_close: "Close",
+    kids: "Simple explanations for primary school", kids_desc: "Larger text, fewer tabs, Nex and stars.",
+    std: "Standard", std_desc: "All sections and detailed texts."
+  }
+};
+function gateStep(step) {
+  const gate = document.getElementById("mode-gate"), card = document.getElementById("gate-card");
+  if (!gate || !card) return;
+  gate.hidden = false;
+  const G = KG[state.lang === "en" ? "en" : "tr"];
+  if (step === "lang") {
+    card.innerHTML = `<h2>Dil seçin · Choose a language</h2>
+      <div class="mode-opts">
+        <button class="mode-opt" type="button" data-gate-lang="tr"><b>Türkçe</b></button>
+        <button class="mode-opt" type="button" data-gate-lang="en"><b>English</b></button>
+      </div>`;
+  } else if (step === "mode") {
+    card.innerHTML = `<h2>${L("mode_title")}</h2>
+      <div class="mode-opts">
+        <button class="mode-opt" type="button" data-mode-choice="kids"><b>${G.kids}</b><span>${G.kids_desc}</span></button>
+        <button class="mode-opt" type="button" data-mode-choice="std"><b>${G.std}</b><span>${G.std_desc}</span></button>
+      </div>`;
+  } else if (step === "tour") {
+    card.innerHTML = `<h2>${G.tour_title}</h2>
+      <ul class="tour">${G.tour.map(t => `<li>${t}</li>`).join("")}</ul>
+      <div class="gate-actions"><button class="btn btn-solid" type="button" data-gate-start>${G.start}</button></div>`;
+  }
+}
+function finishGate() {
+  document.getElementById("mode-gate").hidden = true;
+  try { localStorage.setItem("nexium-onboarded", "1"); } catch (e) {}
+  if (currentMode() === "kids") {
+    const G = KG[state.lang === "en" ? "en" : "tr"];
+    document.getElementById("nex-text").textContent = G.nex_intro;
+    document.getElementById("nex-chat-btn").textContent = G.nex_chat;
+    document.getElementById("nex-close-btn").textContent = G.nex_close;
+    document.getElementById("nex-bubble").hidden = false;
+  }
+}
+
 /* ================= BAŞLAT ================= */
 state.lang = initLang();
 applyI18n();
@@ -2764,5 +2836,12 @@ requestAnimationFrame(loop);
   </form>
 </section>
 <div class="toast" id="toast" hidden></div>
+<div class="nex-bubble" id="nex-bubble" hidden>
+  <p id="nex-text"></p>
+  <div class="gate-actions">
+    <button class="btn btn-solid" type="button" data-nex-chat id="nex-chat-btn"></button>
+    <button class="btn" type="button" data-nex-close id="nex-close-btn"></button>
+  </div>
+</div>
 </body>
 </html>
