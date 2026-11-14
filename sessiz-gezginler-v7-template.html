@@ -312,6 +312,10 @@
   html[data-mode="kids"] .btn, html[data-mode="kids"] .btn-solid { border-radius: 999px; }
   html[data-mode="kids"] .card, html[data-mode="kids"] .panel, html[data-mode="kids"] .quiz-box, html[data-mode="kids"] .opt, html[data-mode="kids"] .mode-card { border-radius: 16px; }
   html[data-mode="kids"] h1, html[data-mode="kids"] h2 { font-weight: 700; }
+  /* İlkokul modu, açık tema: sıcak ve neşeli tonlar */
+  html[data-mode="kids"]:not([data-theme="dark"]) { --bg: #fffaf0; --surface: #fff1cc; --surface-2: #ffe7a8; --line: #f4d27a; --line-soft: #fbe9b8; --text: #2b1d00; --text-2: #4a3500; --muted: #7a5a1a; --dim: #a8863f; --accent: #e8890c; --photo-bg: #fff6dc; --frame-bg: #fff6dc; --tag-bg: #fff1cc; --btn-hover: #fbb13c; --card-hover: #e8890c; }
+  html[data-mode="kids"]:not([data-theme="dark"]) h1, html[data-mode="kids"]:not([data-theme="dark"]) h2 { color: #7a3e00; }
+  html[data-mode="kids"]:not([data-theme="dark"]) .card { background: #fffdf6; }
   .mode-gate { position: fixed; inset: 0; z-index: 200; background: rgba(10,20,36,0.55); display: flex; align-items: center; justify-content: center; padding: 20px; }
   .mode-card { background: var(--bg); color: var(--text); max-width: 560px; width: 100%; padding: 32px; border: 1px solid var(--line); border-radius: 8px; }
   .mode-card h2 { font-size: 26px; margin: 0 0 6px; }
