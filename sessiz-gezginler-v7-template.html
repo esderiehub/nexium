@@ -321,7 +321,6 @@
             <button data-body="titan" aria-pressed="false" data-i18n="titan">Titan</button>
           </div>
           <div class="group" role="group" aria-label="View">
-            <button class="btn" data-view="real" aria-pressed="false">Gerçek görüntü</button>
             <button class="btn" data-zoom="out" aria-label="−">−</button>
             <button class="btn" data-zoom="in" aria-label="+">+</button>
             <button class="btn" data-zoom="reset" data-i18n="reset">Sıfırla</button>
@@ -333,7 +332,6 @@
           <canvas id="canvas-mars" width="520" height="520" tabindex="0" role="img" aria-label="Mars globe" hidden></canvas>
           <canvas id="canvas-venus" width="520" height="520" tabindex="0" role="img" aria-label="Venus globe" hidden></canvas>
           <canvas id="canvas-titan" width="520" height="520" tabindex="0" role="img" aria-label="Titan globe" hidden></canvas>
-          <img class="real" id="real-img" alt="" hidden>
         </div>
         <p class="caption" id="stage-caption"></p>
       </div>
@@ -542,8 +540,6 @@ const MAP_SRC = {
   venus: "maps/venus.jpg",
   titan: "maps/titan.jpg"
 };
-/* Gerçek görüntü için tam disk fotoğrafı */
-const REAL_IMG = { ay: IMG.moon_a, mars: IMG.mars_a };
 
 /* ================= ÇEVİRİ ================= */
 const T = {
@@ -1510,9 +1506,8 @@ function setBody(body) {
   state.body = body;
   document.querySelectorAll("[data-body]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.body === body)));
   const g = globes[body];
-  const useReal = (state.view === "real" && !!REAL_IMG[body]) || !g.tex;
-  for (const b of ["ay", "mars", "venus", "titan"]) document.getElementById("canvas-" + b).hidden = body !== b || useReal;
-  applyRealImage(useReal);
+  for (const b of ["ay", "mars", "venus", "titan"]) document.getElementById("canvas-" + b).hidden = body !== b;
+  applyRealImage();
   g.dirty = true;
   document.getElementById("body-title").textContent = L("body_" + ({ ay: "moon", mars: "mars", venus: "venus", titan: "titan" }[body]));
   if (state.selected && byId[state.selected].body !== body) state.selected = null;
@@ -1520,19 +1515,9 @@ function setBody(body) {
   renderPanel();
 }
 
-function applyRealImage(useReal) {
-  const body = state.body, g = globes[body];
-  const img = document.getElementById("real-img");
-  img.src = REAL_IMG[body];
-  img.alt = L("alt_" + ({ ay: "moon", mars: "mars", venus: "venus", titan: "titan" }[body]));
-  img.hidden = !useReal;
-  const btn = document.querySelector("[data-view]");
-  btn.disabled = !g.tex || !REAL_IMG[body];
-  btn.setAttribute("aria-pressed", String(state.view === "real"));
-  btn.textContent = state.view === "real" ? L("view_sim") : L("view_real");
-  const capKey = g.mapState === "fail" ? "cap_fail"
-    : g.mapState === "loading" ? "cap_loading"
-    : (state.view === "real" ? "cap_real" : "cap_sim");
+function applyRealImage() {
+  const g = globes[state.body];
+  const capKey = g.mapState === "fail" ? "cap_fail" : g.mapState === "loading" ? "cap_loading" : "cap_sim";
   document.getElementById("stage-caption").textContent = L(capKey);
 }
 
@@ -2104,11 +2089,6 @@ document.addEventListener("click", e => {
   if ((el = t.closest("[data-go]"))) return selectMachine(el.dataset.go, true);
   if ((el = t.closest("[data-ptab]"))) { state.panel = el.dataset.ptab; return renderPanel(); }
   if ((el = t.closest("[data-body]"))) return setBody(el.dataset.body);
-  if ((el = t.closest("[data-view]"))) {
-    if (el.disabled) return;
-    state.view = state.view === "real" ? "sim" : "real";
-    return setBody(state.body);
-  }
   if ((el = t.closest("[data-zoom]"))) {
     const g = globes[state.body], z = el.dataset.zoom;
     if (z === "in") g.tZoom = clamp(g.tZoom * 1.25, 1, 3);
