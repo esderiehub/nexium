@@ -1733,7 +1733,7 @@ function applyI18n() {
   document.getElementById("nasa-q").value = N.q;
 }
 function setLang(l) {
-  setTimeout(() => { applyTheme(currentTheme()); applyMode(currentMode()); }, 0);
+  setTimeout(() => { applyTheme(currentTheme()); applyMode(currentMode()); renderBadges(); }, 0);
   if (l !== "tr" && l !== "en") return;
   state.lang = l;
   try { localStorage.setItem("sg-lang", l); } catch (e) {}
