@@ -112,7 +112,7 @@
   .kid-talk { display: flex; flex-direction: column; gap: 14px; }
   .kid-row { display: flex; align-items: flex-end; gap: 10px; }
   .kid-row-a { flex-direction: row-reverse; }
-  .kid-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: #fff; flex: none; border: 2px solid var(--line); }
+  .kid-avatar { width: 84px; height: 84px; object-fit: contain; background: transparent; flex: none; }
   .kid-bubble { position: relative; max-width: calc(100% - 90px); padding: 12px 15px; border-radius: 18px; font-size: 17px; line-height: 1.6; }
   .kid-bubble b { display: block; font-size: 13px; margin-bottom: 3px; opacity: .75; }
   .kid-u { background: #bbf7d0; color: #052e16; border-bottom-left-radius: 4px; }
@@ -2981,7 +2981,7 @@ function kidsPanel(m) {
   const en = state.lang === "en";
   const lines = DLG[en ? "en" : "tr"][m.id] || [];
   const who = { u: en ? "Zipzip" : "Zıpzıp", a: "Astro" };
-  const pic = { u: "img/alien.jpg", a: "img/astro.jpg" };
+  const pic = { u: "img/alien.png", a: "img/astro.png" };
   if (kidState.quiz) {
     const qs = kidState.quiz;
     if (kidState.qi >= qs.length) {
