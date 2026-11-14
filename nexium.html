@@ -297,6 +297,11 @@
   .theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   html:not([data-theme="dark"]) .i-sun, html[data-theme="dark"] .i-moon { display: none; }
   .ord-list { margin: 16px 0; padding-left: 20px; color: var(--text-2); }
+  html[data-mode="kids"] { --radius: 16px; --accent: #f59e0b; --btn-text: #1a1200; --btn-hover: #fbb13c; --card-hover: #f59e0b; }
+  html[data-mode="kids"] body { background-image: radial-gradient(circle, var(--line) 1.4px, transparent 1.9px); background-size: 44px 44px; }
+  html[data-mode="kids"] .btn, html[data-mode="kids"] .btn-solid { border-radius: 999px; }
+  html[data-mode="kids"] .card, html[data-mode="kids"] .panel, html[data-mode="kids"] .quiz-box, html[data-mode="kids"] .opt, html[data-mode="kids"] .mode-card { border-radius: 16px; }
+  html[data-mode="kids"] h1, html[data-mode="kids"] h2 { font-weight: 700; }
   .mode-gate { position: fixed; inset: 0; z-index: 200; background: rgba(10,20,36,0.55); display: flex; align-items: center; justify-content: center; padding: 20px; }
   .mode-card { background: var(--bg); color: var(--text); max-width: 560px; width: 100%; padding: 32px; border: 1px solid var(--line); border-radius: 8px; }
   .mode-card h2 { font-size: 26px; margin: 0 0 6px; }
@@ -2337,7 +2342,8 @@ function loadMaps() {
         const x = c.getContext("2d");
         x.drawImage(im, 0, 0);
         const d = x.getImageData(0, 0, c.width, c.height);
-        g.tex = { data: d.data, W: c.width, H: c.height };
+        g.realTex = { data: d.data, W: c.width, H: c.height };
+        g.tex = currentMode() === "kids" ? kidsTex(b) : g.realTex;
         g.mapState = "ok";
       } catch (e) {
         g.mapState = "fail";
@@ -2442,9 +2448,54 @@ try { applyTheme(localStorage.getItem("nexium-theme") === "dark" ? "dark" : "lig
 
 /* ================= MOD (İlkokul / Standart) ================= */
 function currentMode() { return document.documentElement.getAttribute("data-mode") === "kids" ? "kids" : "std"; }
+/* Çocuk modu için çizgi film tarzı küre dokuları (kodla çizilir) */
+const kidsCache = {};
+function makeKidsTex(b) {
+  const W = 1024, H = 512, c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  const P = {
+    ay: { base: "#dfe3ea", spots: ["#aab3c4", "#c8cfdb"], n: 46 },
+    mars: { base: "#f2895e", spots: ["#d86a3d", "#ffb08a"], n: 56 },
+    venus: { base: "#ffd166", spots: ["#f4a261", "#ffe9a8"], n: 56 },
+    titan: { base: "#e9a84c", spots: ["#b9702c", "#ffd58f"], n: 50 }
+  }[b];
+  let seed = 7 + b.length * 31 + b.charCodeAt(0);
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  x.fillStyle = P.base; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < P.n; i++) {
+    const cx = rnd() * W, cy = rnd() * H, r = 18 + rnd() * 80;
+    x.globalAlpha = 0.55; x.fillStyle = P.spots[i % 2];
+    for (const dx of [-W, 0, W]) { x.beginPath(); x.ellipse(cx + dx, cy, r * 1.7, r, 0, 0, Math.PI * 2); x.fill(); }
+  }
+  x.globalAlpha = 1;
+  if (b === "ay") {
+    for (let i = 0; i < 70; i++) {
+      const cx = rnd() * W, cy = rnd() * H, r = 5 + rnd() * 16;
+      x.strokeStyle = "rgba(255,255,255,0.85)"; x.lineWidth = 3;
+      x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke();
+    }
+  } else {
+    for (let y = 0; y < H; y += 48) { x.globalAlpha = 0.14; x.fillStyle = (y / 48) % 2 ? "#ffffff" : "#000000"; x.fillRect(0, y, W, 24); }
+    x.globalAlpha = 1;
+  }
+  const d = x.getImageData(0, 0, W, H);
+  return { data: d.data, W, H };
+}
+function kidsTex(b) { return kidsCache[b] || (kidsCache[b] = makeKidsTex(b)); }
+function refreshGlobeTextures(m) {
+  for (const b of ["ay", "mars", "venus", "titan"]) {
+    const g = globes[b];
+    if (m === "kids") g.tex = kidsTex(b);
+    else if (g.realTex) g.tex = g.realTex;
+    g.dirty = true;
+  }
+}
+
 function applyMode(m) {
   if (m === "kids") document.documentElement.setAttribute("data-mode", "kids");
   else document.documentElement.removeAttribute("data-mode");
+  refreshGlobeTextures(m);
   const b = document.querySelector("[data-mode-toggle]");
   if (b) b.textContent = currentMode() === "kids" ? (state.lang === "en" ? "Standard" : "Standart") : (state.lang === "en" ? "Simple" : "Basit");
   const cur = document.querySelector(".nav [aria-selected='true']");
