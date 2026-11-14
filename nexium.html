@@ -2834,11 +2834,28 @@ function answerNex(text) {
   if (/yıldız|ödül|rozet|star|badge/.test(low)) return K.starsTip;
   return K.none;
 }
-function sendChat(text) {
+const NEX_API = "https://bitter-surf-9863.ddemireser.workers.dev/";
+function siteContext() {
+  const lines = machines.map(m => `${mf(m, "name")} | ${m.year}${m.endYear && m.endYear !== m.year ? "-" + m.endYear : ""} | ${mf(m, "place")} | ${mf(m, "short")}`);
+  return lines.join("
+").slice(0, 3800);
+}
+async function sendChat(text) {
   const t = (text || "").trim();
   if (!t) return;
   chatAdd("me", t);
-  chatAdd("bot", answerNex(t));
+  const local = () => answerNex(t);
+  try {
+    const r = await fetch(NEX_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: t, lang: state.lang === "en" ? "en" : "tr", context: siteContext() })
+    });
+    const data = r.ok ? await r.json() : null;
+    chatAdd("bot", data && data.answer ? data.answer : local());
+  } catch (e) {
+    chatAdd("bot", local());
+  }
 }
 function kidsStory(m) {
   const K = KTL();
