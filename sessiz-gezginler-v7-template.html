@@ -2720,6 +2720,7 @@ function applyMode(m) {
   if (m === "kids") document.documentElement.setAttribute("data-mode", "kids");
   else document.documentElement.removeAttribute("data-mode");
   refreshGlobeTextures(m);
+  if (document.getElementById("panel-body") && typeof renderPanel === "function") renderPanel();
   const b = document.querySelector("[data-mode-toggle]");
   if (b) b.textContent = currentMode() === "kids" ? (state.lang === "en" ? "Standard" : "Standart") : (state.lang === "en" ? "Simple" : "Basit");
   const cur = document.querySelector(".nav [aria-selected='true']");
