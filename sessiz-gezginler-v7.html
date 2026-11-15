@@ -3116,13 +3116,31 @@ let A11Y = Object.assign({}, A11Y_DEFAULT, loadJSON("nexium-a11y", {}));
 function saveA11y() { saveJSON("nexium-a11y", A11Y); }
 function applyA11y() {
   const h = document.documentElement;
-  h.style.zoom = String(A11Y.size / 100);
+  h.style.zoom = "";
+  scheduleScale();
   h.classList.toggle("a11y-contrast", !!A11Y.contrast);
   h.classList.toggle("a11y-spacing", !!A11Y.spacing);
   h.classList.toggle("a11y-mono", !!A11Y.mono);
   h.classList.toggle("a11y-dys", !!A11Y.dys);
   h.classList.toggle("a11y-reduce", !!A11Y.reduce);
 }
+/* Yazı boyutu: yalnızca metin öğeleri ölçeklenir (görseller ve düzen sabit kalır) */
+function scaleText(f) {
+  const els = Array.from(document.querySelectorAll("body *"));
+  els.forEach(el => { if (el.dataset.a11yFs) { el.style.fontSize = ""; delete el.dataset.a11yFs; } });
+  if (Math.abs(f - 1) < 0.001) return;
+  const hasOwnText = el => Array.from(el.childNodes).some(n => n.nodeType === 3 && n.textContent.trim());
+  const sizes = [];
+  els.forEach(el => { if (hasOwnText(el)) sizes.push([el, parseFloat(getComputedStyle(el).fontSize)]); });
+  sizes.forEach(([el, px]) => { el.style.fontSize = (px * f) + "px"; el.dataset.a11yFs = "1"; });
+}
+let scaleTimer = null;
+function scheduleScale() {
+  clearTimeout(scaleTimer);
+  scaleTimer = setTimeout(() => scaleText(A11Y.size / 100), 120);
+}
+new MutationObserver(() => { if (A11Y.size !== 100) scheduleScale(); }).observe(document.body, { childList: true, subtree: true });
+
 function initSettings() {
   document.querySelectorAll("[data-a11y]").forEach(el => {
     const k = el.dataset.a11y;
