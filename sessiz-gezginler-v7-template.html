@@ -424,6 +424,7 @@
   .tour-bubble p { margin: 0; font-size: 16px; line-height: 1.6; }
   .tour-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
   .tour-nav span { font-size: 13px; color: var(--muted); }
+  .tour-spot { position: relative !important; z-index: 150 !important; box-shadow: 0 0 0 100vmax rgba(0,0,0,.62) !important; outline: 3px solid #fbbf24 !important; outline-offset: 8px; border-radius: 12px; }
   .tour-hl { outline: 2px solid #fbbf24; outline-offset: 4px; border-radius: 6px; background: rgba(251,191,36,.08); }
   .set-list.tour-light { background: #ffffff; color: #0b1f3a; border-radius: 14px; padding: 8px 18px; }
   .set-list.tour-light .set-row { border-bottom-color: #d4dce6; }
@@ -3174,40 +3175,64 @@ document.addEventListener("change", e => { if (e.target.dataset && e.target.data
 /* ================= REHBER TURU (Nex konuşur) ================= */
 const TOUR = {
   tr: [
-    ["gezegen", "Merhaba, ben Nex! Bu sitede gezegenleri döndürüp makinelere tıklayarak hikâyelerini öğrenebilirsin.", -1],
-    ["makineler", "Makineler bölümünde 27 makinenin kartlarını görebilirsin. Quiz'de ise bilgilerini test edebilirsin.", -1],
-    ["ayarlar", "Şimdi Erişilebilirlik bölümüne bakalım. Site karanlık, bu bölüm ise daha aydınlık görünüyor.", -1],
-    ["ayarlar", "Yazı boyutu: yazıları büyütüp küçültebilirsin.", 0],
-    ["ayarlar", "Yüksek kontrast: metin ve çizgiler daha belirgin olur.", 1],
-    ["ayarlar", "Geniş harf ve satır aralığı: okumayı rahatlatır.", 2],
-    ["ayarlar", "Monokrom: sayfayı renksiz gösterir.", 3],
-    ["ayarlar", "Disleksi dostu yazı tipi: daha geniş aralıklı, okunması kolay bir yazı tipi kullanır.", 4],
-    ["ayarlar", "Hareketleri azalt: animasyonları kapatır. Tercihleriniz kaydedilir, istediğiniz zaman değiştirebilirsiniz.", 5]
+    ["gezegen", "Merhaba, ben Nex! Burada gezegenleri döndürebilir, bir makineye tıklayarak hikâyesini öğrenebilirsin.", -1, "#stage"],
+    ["makineler", "Makineler bölümünde 27 makinenin kartları var. Arayabilir ve filtreleyebilirsin.", -1, "#cards"],
+    ["zaman", "Zaman bölümünde kaydırıcıyla yıllara bakıp hangi makinelerin yüzeyde olduğunu görebilirsin.", -1, "#tl"],
+    ["bilim", "Bilim bölümünde makinelerin taşıdığı bilimsel aletleri öğrenebilirsin.", -1, "#inst-list"],
+    ["rakamlar", "Rakamlar bölümünde mesafe ve zamanla ilgili sayıları görebilirsin.", -1, "#stats"],
+    ["goruntuler", "NASA Arşivi'nde NASA'nın görsel arşivinde arama yapabilirsin.", -1, "#sec-goruntuler .subtabs"],
+    ["quiz", "Quiz bölümünde soruları çözebilir, kelime ve sıralama oyunlarını oynayabilirsin.", -1, "#game-modes"],
+    ["sozluk", "Sözlük'te terimleri arayabilir ve anlamlarını okuyabilirsin.", -1, "#gq"],
+    ["ayarlar", "Şimdi Erişilebilirlik bölümüne bakalım. Site karanlık, bu bölüm ise daha aydınlık görünüyor.", -1, "#sec-ayarlar .set-list"],
+    ["ayarlar", "Yazı boyutu: yazıları büyütüp küçültebilirsin.", 0, null],
+    ["ayarlar", "Yüksek kontrast: metin ve çizgiler daha belirgin olur.", 1, null],
+    ["ayarlar", "Geniş harf ve satır aralığı: okumayı rahatlatır.", 2, null],
+    ["ayarlar", "Monokrom: sayfayı renksiz gösterir.", 3, null],
+    ["ayarlar", "Disleksi dostu yazı tipi: daha geniş aralıklı, okunması kolay bir yazı tipi kullanır.", 4, null],
+    ["ayarlar", "Hareketleri azalt: animasyonları kapatır. Tercihleriniz kaydedilir, istediğiniz zaman değiştirebilirsiniz.", 5, null]
   ],
   en: [
-    ["gezegen", "Hi, I'm Nex! On this site you can rotate the planets and click machines to learn their stories.", -1],
-    ["makineler", "In Machines you can see the cards of 27 machines. In the Quiz you can test what you know.", -1],
-    ["ayarlar", "Now let's look at Accessibility. The site is dark, while this section is brighter.", -1],
-    ["ayarlar", "Text size: make the text bigger or smaller.", 0],
-    ["ayarlar", "High contrast: text and lines become clearer.", 1],
-    ["ayarlar", "Wider letter and line spacing: makes reading easier.", 2],
-    ["ayarlar", "Monochrome: shows the page without colors.", 3],
-    ["ayarlar", "Dyslexia-friendly font: wider spacing and an easier-to-read font.", 4],
-    ["ayarlar", "Reduce motion: turns off animations. Your choices are saved and you can change them any time.", 5]
+    ["gezegen", "Hi, I'm Nex! Here you can rotate the planets and click a machine to learn its story.", -1, "#stage"],
+    ["makineler", "In Machines you can see the cards of 27 machines. You can search and filter them.", -1, "#cards"],
+    ["zaman", "In Timeline, use the slider to see which machines were on the surface in each year.", -1, "#tl"],
+    ["bilim", "In Science you can learn about the scientific instruments the machines carry.", -1, "#inst-list"],
+    ["rakamlar", "In Figures you can see numbers about distance and time.", -1, "#stats"],
+    ["goruntuler", "In the NASA Archive you can search NASA's image archive.", -1, "#sec-goruntuler .subtabs"],
+    ["quiz", "In Quiz you can answer questions and play the word and ordering games.", -1, "#game-modes"],
+    ["sozluk", "In the Glossary you can search terms and read their meanings.", -1, "#gq"],
+    ["ayarlar", "Now let's look at Accessibility. The site is dark, while this section is brighter.", -1, "#sec-ayarlar .set-list"],
+    ["ayarlar", "Text size: make the text bigger or smaller.", 0, null],
+    ["ayarlar", "High contrast: text and lines become clearer.", 1, null],
+    ["ayarlar", "Wider letter and line spacing: makes reading easier.", 2, null],
+    ["ayarlar", "Monochrome: shows the page without colors.", 3, null],
+    ["ayarlar", "Dyslexia-friendly font: wider spacing and an easier-to-read font.", 4, null],
+    ["ayarlar", "Reduce motion: turns off animations. Your choices are saved and you can change them any time.", 5, null]
   ]
 };
 let tourIdx = 0, tourActive = false, tourPrevTheme = "light";
 function tourSteps() { return TOUR[state.lang === "en" ? "en" : "tr"]; }
+function clearTourMarks() {
+  document.querySelectorAll(".tour-spot").forEach(el => el.classList.remove("tour-spot"));
+  document.querySelectorAll(".tour-hl").forEach(el => el.classList.remove("tour-hl"));
+}
 function showTourStep() {
   const steps = tourSteps(), st = steps[tourIdx];
   if (!st) return endTour();
-  const [tab, text, row] = st;
+  const [tab, text, row, target] = st;
   const en = state.lang === "en";
-  applyTheme(tourIdx >= 2 ? "dark" : tourPrevTheme);
+  const a11y = tab === "ayarlar";
+  applyTheme(a11y ? "dark" : tourPrevTheme);
   if (state.tab !== tab) showTab(tab);
+  clearTourMarks();
   const list = document.querySelector("#sec-ayarlar .set-list");
-  if (list) list.classList.toggle("tour-light", tourIdx >= 2);
-  document.querySelectorAll("#sec-ayarlar .set-row").forEach((r, i) => r.classList.toggle("tour-hl", i === row));
+  if (list) list.classList.toggle("tour-light", a11y);
+  if (a11y && row >= 0) {
+    document.querySelectorAll("#sec-ayarlar .set-row").forEach((r, i) => r.classList.toggle("tour-hl", i === row));
+  }
+  if (target) {
+    const el = document.querySelector(target);
+    if (el) { el.classList.add("tour-spot"); el.scrollIntoView({ block: "center", behavior: "smooth" }); }
+  }
   const last = tourIdx === steps.length - 1;
   const bub = document.getElementById("tour-bubble");
   bub.innerHTML = `<b>Nex</b><p>${text}</p>
@@ -3228,7 +3253,7 @@ function tourPrev() { if (tourIdx > 0) { tourIdx--; showTourStep(); } }
 function endTour() {
   tourActive = false;
   document.getElementById("tour-bubble").hidden = true;
-  document.querySelectorAll(".tour-hl").forEach(el => el.classList.remove("tour-hl"));
+  clearTourMarks();
   const list = document.querySelector("#sec-ayarlar .set-list");
   if (list) list.classList.remove("tour-light");
   applyTheme(tourPrevTheme);
