@@ -449,7 +449,8 @@
     background-attachment: fixed;
   }
   html[data-theme="dark"]:not([data-mode="kids"]) body {
-    background-image: linear-gradient(180deg, #06080d 0%, #0b0c0e 70%);
+    background-color: #070a12;
+    background-image: none;
   }
   html[data-theme="dark"]:not([data-mode="kids"]) body::before {
     content: ""; position: fixed; left: 0; top: 0; width: calc(100% + 340px); height: calc(100% + 340px);
@@ -462,7 +463,7 @@
       radial-gradient(1px 1px at 55% 40%, #ffffff, transparent),
       radial-gradient(1px 1px at 6% 88%, #fff7d6, transparent);
     background-size: 340px 340px;
-    animation: starDrift 150s linear infinite;
+    animation: starDrift 60s linear infinite;
   }
   @keyframes starDrift { from { transform: translate(0, 0); } to { transform: translate(-340px, -340px); } }
   html.a11y-reduce body::before { animation: none !important; }
