@@ -419,6 +419,16 @@
   .set-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
   .set-row input[type="range"] { width: 200px; accent-color: var(--accent); }
   .set-row output { display: inline-block; min-width: 56px; text-align: right; font-weight: 600; }
+  .tour-bubble { position: fixed; left: 50%; transform: translateX(-50%); bottom: 24px; z-index: 160; width: min(560px, calc(100vw - 32px)); background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; box-shadow: 0 12px 34px rgba(0,0,0,.25); }
+  .tour-bubble b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 6px; }
+  .tour-bubble p { margin: 0; font-size: 16px; line-height: 1.6; }
+  .tour-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  .tour-nav span { font-size: 13px; color: var(--muted); }
+  .tour-hl { outline: 2px solid #fbbf24; outline-offset: 4px; border-radius: 6px; background: rgba(251,191,36,.08); }
+  .set-list.tour-light { background: #ffffff; color: #0b1f3a; border-radius: 14px; padding: 8px 18px; }
+  .set-list.tour-light .set-row { border-bottom-color: #d4dce6; }
+  .set-list.tour-light .set-row label, .set-list.tour-light .set-row output { color: #0b1f3a; }
+  .set-list.tour-light .set-row .btn { color: #0b1f3a; border-color: #0b1f3a; background: #ffffff; }
 </style>
 </head>
 <body>
@@ -2563,7 +2573,9 @@ document.addEventListener("click", e => {
   if (t.closest("[data-theme-toggle]")) return toggleTheme();
   if ((el = t.closest("[data-gate-lang]"))) { setLang(el.dataset.gateLang); return gateStep("mode"); }
   if ((el = t.closest("[data-mode-choice]"))) { chooseMode(el.dataset.modeChoice); return gateStep("tour"); }
-  if (t.closest("[data-gate-start]")) return finishGate();
+  if (t.closest("[data-gate-start]")) return startTour();
+  if (t.closest("[data-tour-next]")) return tourNext();
+  if (t.closest("[data-tour-prev]")) return tourPrev();
   if (t.closest("[data-nex-chat]")) { document.getElementById("nex-bubble").hidden = true; if (document.getElementById("chat").hidden) toggleChat(); return; }
   if (t.closest("[data-nex-close]")) { document.getElementById("nex-bubble").hidden = true; return; }
   if (t.closest("[data-mascot]")) return toggleChat();
@@ -2929,6 +2941,7 @@ const KG = {
       "Yıldızlar (ilkokul modunda): Quiz ve oyunlarda doğru cevaplar yıldız kazandırır, rozetler de açılır."
     ],
     start: "Başla",
+    tour_intro: "Birkaç adımda sitenin özelliklerini gösterelim. İleri ve Geri ile istediğiniz özelliğe bakabilirsiniz.",
     nex_intro: "Merhaba, ben Nex! Bu sitedeki bilgilerle sana yardım ederim. Bir şey sormak ister misin?",
     nex_chat: "Nex ile konuş", nex_close: "Kapat",
     kids: "İlkokul için basit anlatım", kids_desc: "Daha büyük yazılar, daha az sekme, Nex ve yıldızlar.",
@@ -2946,6 +2959,7 @@ const KG = {
       "Stars (in simple mode): correct answers in quizzes and games earn stars, and badges unlock."
     ],
     start: "Start",
+    tour_intro: "Let me show you the main features in a few steps. Use Next and Back to look at any feature.",
     nex_intro: "Hi, I'm Nex! I can help you with the information on this site. Want to ask me something?",
     nex_chat: "Chat with Nex", nex_close: "Close",
     kids: "Simple explanations for primary school", kids_desc: "Larger text, fewer tabs, Nex and stars.",
@@ -2971,7 +2985,7 @@ function gateStep(step) {
       </div>`;
   } else if (step === "tour") {
     card.innerHTML = `<h2>${G.tour_title}</h2>
-      <ul class="tour">${G.tour.map(t => `<li>${t}</li>`).join("")}</ul>
+      <p>${G.tour_intro}</p>
       <div class="gate-actions"><button class="btn btn-solid" type="button" data-gate-start>${G.start}</button></div>`;
   }
 }
@@ -3157,6 +3171,70 @@ function setA11y(el) {
 document.addEventListener("input", e => { if (e.target.dataset && e.target.dataset.a11y) setA11y(e.target); });
 document.addEventListener("change", e => { if (e.target.dataset && e.target.dataset.a11y) setA11y(e.target); });
 
+/* ================= REHBER TURU (Nex konuşur) ================= */
+const TOUR = {
+  tr: [
+    ["gezegen", "Merhaba, ben Nex! Bu sitede gezegenleri döndürüp makinelere tıklayarak hikâyelerini öğrenebilirsin.", -1],
+    ["makineler", "Makineler bölümünde 27 makinenin kartlarını görebilirsin. Quiz'de ise bilgilerini test edebilirsin.", -1],
+    ["ayarlar", "Şimdi Erişilebilirlik bölümüne bakalım. Site karanlık, bu bölüm ise daha aydınlık görünüyor.", -1],
+    ["ayarlar", "Yazı boyutu: yazıları büyütüp küçültebilirsin.", 0],
+    ["ayarlar", "Yüksek kontrast: metin ve çizgiler daha belirgin olur.", 1],
+    ["ayarlar", "Geniş harf ve satır aralığı: okumayı rahatlatır.", 2],
+    ["ayarlar", "Monokrom: sayfayı renksiz gösterir.", 3],
+    ["ayarlar", "Disleksi dostu yazı tipi: daha geniş aralıklı, okunması kolay bir yazı tipi kullanır.", 4],
+    ["ayarlar", "Hareketleri azalt: animasyonları kapatır. Tercihleriniz kaydedilir, istediğiniz zaman değiştirebilirsiniz.", 5]
+  ],
+  en: [
+    ["gezegen", "Hi, I'm Nex! On this site you can rotate the planets and click machines to learn their stories.", -1],
+    ["makineler", "In Machines you can see the cards of 27 machines. In the Quiz you can test what you know.", -1],
+    ["ayarlar", "Now let's look at Accessibility. The site is dark, while this section is brighter.", -1],
+    ["ayarlar", "Text size: make the text bigger or smaller.", 0],
+    ["ayarlar", "High contrast: text and lines become clearer.", 1],
+    ["ayarlar", "Wider letter and line spacing: makes reading easier.", 2],
+    ["ayarlar", "Monochrome: shows the page without colors.", 3],
+    ["ayarlar", "Dyslexia-friendly font: wider spacing and an easier-to-read font.", 4],
+    ["ayarlar", "Reduce motion: turns off animations. Your choices are saved and you can change them any time.", 5]
+  ]
+};
+let tourIdx = 0, tourActive = false, tourPrevTheme = "light";
+function tourSteps() { return TOUR[state.lang === "en" ? "en" : "tr"]; }
+function showTourStep() {
+  const steps = tourSteps(), st = steps[tourIdx];
+  if (!st) return endTour();
+  const [tab, text, row] = st;
+  const en = state.lang === "en";
+  applyTheme(tourIdx >= 2 ? "dark" : tourPrevTheme);
+  if (state.tab !== tab) showTab(tab);
+  const list = document.querySelector("#sec-ayarlar .set-list");
+  if (list) list.classList.toggle("tour-light", tourIdx >= 2);
+  document.querySelectorAll("#sec-ayarlar .set-row").forEach((r, i) => r.classList.toggle("tour-hl", i === row));
+  const last = tourIdx === steps.length - 1;
+  const bub = document.getElementById("tour-bubble");
+  bub.innerHTML = `<b>Nex</b><p>${text}</p>
+    <div class="tour-nav">
+      <button class="btn" type="button" data-tour-prev ${tourIdx === 0 ? "disabled" : ""}>${en ? "← Back" : "← Geri"}</button>
+      <span>${tourIdx + 1} / ${steps.length}</span>
+      <button class="btn btn-solid" type="button" data-tour-next>${last ? (en ? "Finish" : "Bitir") : (en ? "Next →" : "İleri →")}</button>
+    </div>`;
+  bub.hidden = false;
+}
+function startTour() {
+  tourActive = true; tourIdx = 0; tourPrevTheme = currentTheme();
+  document.getElementById("mode-gate").hidden = true;
+  showTourStep();
+}
+function tourNext() { if (tourIdx >= tourSteps().length - 1) return endTour(); tourIdx++; showTourStep(); }
+function tourPrev() { if (tourIdx > 0) { tourIdx--; showTourStep(); } }
+function endTour() {
+  tourActive = false;
+  document.getElementById("tour-bubble").hidden = true;
+  document.querySelectorAll(".tour-hl").forEach(el => el.classList.remove("tour-hl"));
+  const list = document.querySelector("#sec-ayarlar .set-list");
+  if (list) list.classList.remove("tour-light");
+  applyTheme(tourPrevTheme);
+  finishGate();
+}
+
 /* ================= BAŞLAT ================= */
 state.lang = initLang();
 applyI18n();
@@ -3214,5 +3292,6 @@ requestAnimationFrame(loop);
     <button class="btn" type="button" data-nex-close id="nex-close-btn"></button>
   </div>
 </div>
+<div class="tour-bubble" id="tour-bubble" hidden></div>
 </body>
 </html>
