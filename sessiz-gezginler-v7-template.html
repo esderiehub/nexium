@@ -430,6 +430,12 @@
   .set-list.tour-light .set-row { border-bottom-color: #d4dce6; }
   .set-list.tour-light .set-row label, .set-list.tour-light .set-row output { color: #0b1f3a; }
   .set-list.tour-light .set-row .btn { color: #0b1f3a; border-color: #0b1f3a; background: #ffffff; }
+  /* Mobil: üst menü iki satır; sekmeler kendi satırında */
+  @media (max-width: 700px) {
+    .topbar-inner { flex-wrap: wrap; row-gap: 4px; padding-top: 6px; padding-bottom: 0; }
+    .topbar-inner .nav { order: 3; flex: 0 0 100%; width: 100%; min-width: 0; }
+    .topbar-inner .lang { margin-left: auto; }
+  }
 </style>
 </head>
 <body>
@@ -768,6 +774,7 @@ const T = {
     gl_search_ph: "Terim ara",
     gl_none: "Bu arama için terim bulunamadı.",
     src_title: "Kaynakça",
+    radio_hdr: "▮ SON İLETİM",
     nav_settings: "Erişilebilirlik", set_title: "Erişilebilirlik", set_size: "Yazı boyutu", set_contrast: "Yüksek kontrast",
     set_spacing: "Geniş harf ve satır aralığı", set_mono: "Monokrom (renksiz)", set_dys: "Disleksi dostu yazı tipi",
     set_reduce: "Hareketleri azalt", set_reset: "Varsayılana dön",
@@ -867,6 +874,7 @@ const T = {
     gl_search_ph: "Search terms",
     gl_none: "No terms match this search.",
     src_title: "Sources",
+    radio_hdr: "▮ LAST TRANSMISSION",
     nav_settings: "Accessibility", set_title: "Accessibility", set_size: "Text size", set_contrast: "High contrast",
     set_spacing: "Wider letter and line spacing", set_mono: "Monochrome (no color)", set_dys: "Dyslexia-friendly font",
     set_reduce: "Reduce motion", set_reset: "Reset to default",
@@ -1855,7 +1863,9 @@ function setLang(l) {
   renderInstruments();
   renderBars();
   renderStats();
-    renderQuiz();
+  renderEras();
+  renderGameModes();
+  renderGame();
   renderGlossary(document.getElementById("gq").value);
   renderSources();
   renderNasa();
@@ -1945,7 +1955,7 @@ function renderPanel() {
   } else if (state.panel === "neden") {
     content = `<p>${mf(m, "why")}</p>`;
   } else {
-    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="radio-hdr">▮ SON İLETİM · ${m.year} · ${mf(m, "place")}</p><p>${mf(m, "story")}</p></div>`;
+    content = document.documentElement.getAttribute("data-mode") === "kids" ? kidsStory(m) : `<div class="story"><p class="radio-hdr">${L("radio_hdr")} · ${m.year} · ${mf(m, "place")}</p><p>${mf(m, "story")}</p></div>`;
   }
   if (document.documentElement.getAttribute("data-mode") === "kids") {
     tabs.innerHTML = "";
@@ -2920,7 +2930,7 @@ function kidsStory(m) {
   for (let i = 0; i < sents.length; i += 2) pages.push(sents.slice(i, i + 2).join(" "));
   const p = Math.max(0, Math.min(storyPage, pages.length - 1));
   storyPage = p;
-  return `<div class="story kids-story"><p class="radio-hdr">▮ SON İLETİM · ${m.year} · ${mf(m, "place")}</p>
+  return `<div class="story kids-story"><p class="radio-hdr">${L("radio_hdr")} · ${m.year} · ${mf(m, "place")}</p>
     <p class="page-text">${pages[p]}</p>
     <div class="pager">
       <button class="btn" data-spage="-1" ${p === 0 ? "disabled" : ""}>${K.prev}</button>
