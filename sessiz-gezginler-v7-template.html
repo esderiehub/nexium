@@ -467,6 +467,10 @@
   }
   @keyframes starDrift { from { transform: translate(0, 0); } to { transform: translate(-340px, -340px); } }
   html.a11y-reduce body::before { animation: none !important; }
+  /* Açık tema (standart mod): yumuşak gökyüzü gradyanı */
+  html:not([data-theme="dark"]):not([data-mode="kids"]) body {
+    background-image: linear-gradient(180deg, #e3edfb 0%, #f7f9fc 45%, #ffffff 100%);
+  }
 </style>
 </head>
 <body>
